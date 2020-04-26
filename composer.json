@@ -11,8 +11,19 @@
     ],
     "minimum-stability": "dev",
     "require": {
+        "php": "^7.2.5",
         "yui-ezic/z99-parser": "dev-master",
         "ext-json": "*",
-        "yui-ezic/z99-lexer": "dev-master"
+        "yui-ezic/z99-lexer": "dev-master",
+        "antlr/antlr4-php-runtime": "dev-master"
+    }
+    ,
+    "require-dev": {
+        "roave/security-advisories": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "Generated\\": "Generated/"
+        }
     }
 }
