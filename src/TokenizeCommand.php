@@ -46,6 +46,8 @@ class TokenizeCommand extends Command
             fwrite($file, $lexer->tokenize($program));
         }
 
+        $output->writeln('<info>Done!</info>');
+
         return 0;
     }
 }

@@ -7,5 +7,6 @@ use Symfony\Component\Console\Application;
 $application = new Application();
 
 $application->add(new \Z99Compiler\TokenizeCommand());
+$application->add(new \Z99Compiler\ParsingCommand());
 
 $application->run();
