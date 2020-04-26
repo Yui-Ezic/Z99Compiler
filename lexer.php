@@ -21,7 +21,7 @@ try {
     $file = fopen('output.txt', 'wb');
     fwrite($file, json_encode($lexer->getTokens(), JSON_PRETTY_PRINT));
 } catch (LexerException $e) {
-    $message = "Lexer failed with error '" . $e->getMessage() . "' in line " . $e->getLine() . PHP_EOL;
+    $message = "Lexer failed with error '" . $e->getMessage() . "' in line " . $e->getErrorLine() . PHP_EOL;
     $message .= 'String: ' . $e->getString();
     echo $message;
 }

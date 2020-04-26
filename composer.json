@@ -12,7 +12,7 @@
     "minimum-stability": "dev",
     "require": {
         "yui-ezic/z99-parser": "dev-master",
-        "yui-ezic/z99-lexer": "dev-master",
-        "ext-json": "*"
+        "ext-json": "*",
+        "yui-ezic/z99-lexer": "dev-master"
     }
 }
