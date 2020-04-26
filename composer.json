@@ -15,7 +15,8 @@
         "yui-ezic/z99-parser": "dev-master",
         "ext-json": "*",
         "yui-ezic/z99-lexer": "dev-master",
-        "antlr/antlr4-php-runtime": "dev-master"
+        "antlr/antlr4-php-runtime": "dev-master",
+        "symfony/console": "^5.1@dev"
     }
     ,
     "require-dev": {
@@ -23,7 +24,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Generated\\": "Generated/"
+            "Generated\\": "Generated/",
+            "Z99Compiler\\": "src/"
         }
     }
 }
