@@ -1,0 +1,18 @@
+{
+    "name": "yui-ezic/z99-compiler",
+    "description": "Compiler for Z99 language",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Misha Zuev",
+            "email": "mishan221199@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "yui-ezic/z99-parser": "dev-master",
+        "yui-ezic/z99-lexer": "dev-master",
+        "ext-json": "*"
+    }
+}
