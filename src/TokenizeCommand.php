@@ -2,6 +2,7 @@
 
 namespace Z99Compiler;
 
+use InvalidArgumentException;
 use Symfony\Component\Console\Question\Question;
 use Z99Compiler\Services\Lexer\Antlr4Lexer;
 use Z99Compiler\Services\Lexer\DefaultLexer;
@@ -44,6 +45,8 @@ class TokenizeCommand extends Command
         } elseif ($lexer === 'antlr4') {
             $lexer = new Antlr4Lexer();
             fwrite($file, $lexer->tokenize($program));
+        } else {
+            throw new InvalidArgumentException('Unknown lexer ' . $lexer);
         }
 
         $output->writeln('<info>Done!</info>');

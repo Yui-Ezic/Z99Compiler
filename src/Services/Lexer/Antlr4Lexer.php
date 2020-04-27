@@ -29,7 +29,7 @@ class Antlr4Lexer
             $array[] = $this->tokenToArray($token, $tokenMap);
         }
 
-        return json_encode($array);
+        return json_encode($array, JSON_PRETTY_PRINT);
     }
 
     private function tokenToArray(CommonToken $token, array $tokenMap): array
