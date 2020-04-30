@@ -164,6 +164,6 @@ class AssignHandler extends AbstractHandler
             }
         }
 
-        throw new RuntimeException('Cannot find variable ' . $name , ' in constant table.');
+        throw new RuntimeException('Cannot find variable ' . $name . ' in constant table.');
     }
 }

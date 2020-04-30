@@ -53,6 +53,8 @@ class SemanticCommand extends Command
         $file = fopen($input->getOption('output'), 'wb');
         fwrite($file, json_encode($results, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT));
 
+        $output->writeln('<info>Done!</info>');
+
         return 0;
     }
 
