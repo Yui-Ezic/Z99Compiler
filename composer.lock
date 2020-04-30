@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7ec9c0bcba38af573dade9e6cc091759",
+    "content-hash": "c979cf9bfe7f65f0a58dfad2389a39a7",
     "packages": [
         {
             "name": "antlr/antlr4-php-runtime",
@@ -745,12 +745,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Yui-Ezic/Z99Parser.git",
-                "reference": "c54b298f1618580459596167d1e16ab9331c5801"
+                "reference": "c473e5eef894d076de83d352653b99a26517ab56"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Yui-Ezic/Z99Parser/zipball/c54b298f1618580459596167d1e16ab9331c5801",
-                "reference": "c54b298f1618580459596167d1e16ab9331c5801",
+                "url": "https://api.github.com/repos/Yui-Ezic/Z99Parser/zipball/c473e5eef894d076de83d352653b99a26517ab56",
+                "reference": "c473e5eef894d076de83d352653b99a26517ab56",
                 "shasum": ""
             },
             "require": {
@@ -774,7 +774,7 @@
                 }
             ],
             "description": "Parser for Z99 language",
-            "time": "2020-04-26T16:39:03+00:00"
+            "time": "2020-04-28T23:52:26+00:00"
         }
     ],
     "packages-dev": [
@@ -1048,16 +1048,16 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "yui-ezic/z99-parser": 20,
         "yui-ezic/z99-lexer": 20,
         "antlr/antlr4-php-runtime": 20,
         "symfony/console": 20,
+        "yui-ezic/z99-parser": 20,
         "roave/security-advisories": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": "^7.2.5",
+        "php": "^7.3",
         "ext-json": "*"
     },
     "platform-dev": []
