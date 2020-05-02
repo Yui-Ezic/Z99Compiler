@@ -4,7 +4,7 @@
 namespace SemanticAnalyzer\Handlers;
 
 use RuntimeException;
-use SemanticAnalyzer\Tree\Node;
+use Z99Compiler\Entity\Tree\Node;
 
 abstract class AbstractHandler
 {

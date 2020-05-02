@@ -8,7 +8,9 @@ use RuntimeException;
 use SemanticAnalyzer\Handlers\AssignHandler;
 use SemanticAnalyzer\Handlers\ConstantsTableHandler;
 use SemanticAnalyzer\Handlers\DeclareListHandler;
-use SemanticAnalyzer\Tree\Node;
+use Z99Compiler\Entity\Constant;
+use Z99Compiler\Entity\Identifier;
+use Z99Compiler\Entity\Tree\Node;
 
 class SemanticAnalyzer
 {

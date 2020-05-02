@@ -1,7 +1,7 @@
 <?php
 
 
-namespace SemanticAnalyzer\Tree;
+namespace Z99Compiler\Entity\Tree;
 
 
 class TreeBuilder

@@ -5,8 +5,8 @@ namespace SemanticAnalyzer\Handlers;
 
 
 use RuntimeException;
-use SemanticAnalyzer\Identifier;
-use SemanticAnalyzer\Tree\Node;
+use Z99Compiler\Entity\Identifier;
+use Z99Compiler\Entity\Tree\Node;
 
 class DeclareListHandler extends AbstractHandler
 {

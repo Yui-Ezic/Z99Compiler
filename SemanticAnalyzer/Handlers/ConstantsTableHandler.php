@@ -5,8 +5,8 @@ namespace SemanticAnalyzer\Handlers;
 
 
 use RuntimeException;
-use SemanticAnalyzer\Constant;
-use SemanticAnalyzer\Tree\Node;
+use Z99Compiler\Entity\Constant;
+use Z99Compiler\Entity\Tree\Node;
 
 class ConstantsTableHandler extends AbstractHandler
 {

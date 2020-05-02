@@ -1,7 +1,7 @@
 <?php
 
 
-namespace SemanticAnalyzer;
+namespace Z99Compiler\Entity;
 
 
 use JsonSerializable;

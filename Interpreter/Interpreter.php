@@ -6,9 +6,9 @@ namespace Z99Interpreter;
 
 use SplStack;
 use RuntimeException;
-use SemanticAnalyzer\Constant;
-use SemanticAnalyzer\Identifier;
-use SemanticAnalyzer\BinaryOperator;
+use Z99Compiler\Entity\Constant;
+use Z99Compiler\Entity\Identifier;
+use Z99Compiler\Entity\BinaryOperator;
 
 class Interpreter
 {

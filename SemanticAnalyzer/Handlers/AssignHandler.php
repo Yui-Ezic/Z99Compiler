@@ -5,10 +5,10 @@ namespace SemanticAnalyzer\Handlers;
 
 
 use RuntimeException;
-use SemanticAnalyzer\BinaryOperator;
-use SemanticAnalyzer\Constant;
-use SemanticAnalyzer\Identifier;
-use SemanticAnalyzer\Tree\Node;
+use Z99Compiler\Entity\BinaryOperator;
+use Z99Compiler\Entity\Constant;
+use Z99Compiler\Entity\Identifier;
+use Z99Compiler\Entity\Tree\Node;
 
 class AssignHandler extends AbstractHandler
 {

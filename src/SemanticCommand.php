@@ -3,11 +3,11 @@
 
 namespace Z99Compiler;
 
-use SemanticAnalyzer\BinaryOperator;
-use SemanticAnalyzer\Constant;
-use SemanticAnalyzer\Identifier;
+use Z99Compiler\Entity\BinaryOperator;
+use Z99Compiler\Entity\Constant;
+use Z99Compiler\Entity\Identifier;
 use SemanticAnalyzer\SemanticAnalyzer;
-use SemanticAnalyzer\Tree\TreeBuilder;
+use Z99Compiler\Entity\Tree\TreeBuilder;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
