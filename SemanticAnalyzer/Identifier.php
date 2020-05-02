@@ -81,6 +81,14 @@ class Identifier implements JsonSerializable
         return $this->value;
     }
 
+    /**
+     * @param string|null $value
+     */
+    public function setValue(?string $value): void
+    {
+        $this->value = $value;
+    }
+
     public function jsonSerialize()
     {
         return [

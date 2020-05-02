@@ -26,7 +26,8 @@
         "psr-4": {
             "Generated\\": "Generated/",
             "Z99Compiler\\": "src/",
-            "SemanticAnalyzer\\": "SemanticAnalyzer/"
+            "SemanticAnalyzer\\": "SemanticAnalyzer/",
+            "Z99Interpreter\\": "Interpreter/"
         }
     }
 }
