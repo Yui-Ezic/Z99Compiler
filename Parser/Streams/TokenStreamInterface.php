@@ -3,7 +3,7 @@
 
 namespace Z99Parser\Streams;
 
-use Z99Parser\Token;
+use Z99Compiler\Entity\Token;
 use OutOfRangeException;
 
 interface TokenStreamInterface

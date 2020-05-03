@@ -6,7 +6,7 @@ namespace Z99Parser\Exceptions;
 
 use RuntimeException;
 use Throwable;
-use Z99Parser\Token;
+use Z99Compiler\Entity\Token;
 
 
 class ParserException extends RuntimeException

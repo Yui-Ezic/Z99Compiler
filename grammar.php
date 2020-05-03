@@ -50,13 +50,13 @@ return (static function (){
 
     $fsm->addFinalState(-3, static function (LexerWriterInterface $writer, string $string, int $line) {
         $string = substr($string, 0, -1);
-        $index = $writer->addConst((int)$string);
+        $index = $writer->addConst((int)$string, 'int');
         $writer->addToken($line, $string, 'IntNum', $index);
     }, false);
 
     $fsm->addFinalState(-4, static function (LexerWriterInterface $writer, string $string, int $line) {
         $string = substr($string, 0, -1);
-        $index = $writer->addConst((float)$string);
+        $index = $writer->addConst((float)$string, 'real');
         $writer->addToken($line, $string, 'RealNum', $index);
     }, false);
 

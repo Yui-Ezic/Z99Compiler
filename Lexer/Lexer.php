@@ -6,6 +6,9 @@ namespace Z99Lexer;
 
 use Z99Lexer\FSM\FSM;
 use Z99Lexer\FSM\State;
+use Z99Compiler\Entity\Token;
+use Z99Compiler\Entity\Constant;
+use Z99Compiler\Entity\Identifier;
 use Z99Lexer\LexerInterfaces\LexerInterface;
 use Z99Lexer\Stream\CharStreamInterface;
 
@@ -113,14 +116,14 @@ class Lexer implements LexerInterface
     /**
      * @inheritDoc
      */
-    public function addConst($const): int
+    public function addConst($value, $type): int
     {
-        if ($id = $this->findConst($const)) {
+        if ($id = $this->findConst($value)) {
             return $id;
         }
 
         $id = $this->constId++;
-        $this->constants[$id] = new Constant($id, $const);
+        $this->constants[$id] = new Constant($id, $value, $type);
 
         return $id;
     }
@@ -128,16 +131,16 @@ class Lexer implements LexerInterface
     /**
      * Returns id of constant if find else null
      *
-     * @param $const
+     * @param $value
      * @return int|null
      */
-    private function findConst($const) : ?int
+    private function findConst($value) : ?int
     {
         $array = array_map(static function (Constant $constant) {
             return $constant->getValue();
         }, $this->constants);
 
-        if ($id = array_search($const, $array, true)) {
+        if ($id = array_search($value, $array, true)) {
             return $id;
         }
 
@@ -154,7 +157,7 @@ class Lexer implements LexerInterface
         }
 
         $id = $this->identifierId++;
-        $this->identifiers[$id] = new Identifier($id, $name, $type);
+        $this->identifiers[$id] = new Identifier($id, $name, $type, null);
 
         return $id;
     }

@@ -7,7 +7,6 @@ namespace Z99Parser;
 use Z99Parser\Exceptions\ParserException;
 use Z99Parser\Streams\TokenStreamInterface;
 
-
 class Parser
 {
     /**

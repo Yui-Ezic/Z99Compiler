@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Z99Lexer;
+namespace Z99Compiler\Entity;
 
 
 use JsonSerializable;

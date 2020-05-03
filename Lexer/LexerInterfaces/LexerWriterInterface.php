@@ -9,10 +9,11 @@ interface LexerWriterInterface
     /**
      * Adds const to table without repetition.
      *
-     * @param $const number
+     * @param $value
+     * @param $type
      * @return int id of this const.
      */
-    public function addConst($const) : int;
+    public function addConst($value, $type) : int;
 
     /**
      * Adds identifier to table without repetition.

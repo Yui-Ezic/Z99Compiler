@@ -4,9 +4,9 @@
 namespace Z99Lexer\LexerInterfaces;
 
 
-use Z99Lexer\Constant;
-use Z99Lexer\Identifier;
-use Z99Lexer\Token;
+use Z99Compiler\Entity\Constant;
+use Z99Compiler\Entity\Identifier;
+use Z99Compiler\Entity\Token;
 
 interface LexerReaderInterface
 {
