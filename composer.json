@@ -13,10 +13,10 @@
     "require": {
         "php": "^7.3",
         "ext-json": "*",
-        "yui-ezic/z99-lexer": "dev-master",
         "antlr/antlr4-php-runtime": "dev-master",
         "symfony/console": "^5.1@dev",
-        "yui-ezic/z99-parser": "dev-master"
+        "graphp/graphviz": "^0.2.2",
+        "ext-ctype": "*"
     }
     ,
     "require-dev": {
@@ -27,7 +27,9 @@
             "Generated\\": "Generated/",
             "Z99Compiler\\": "src/",
             "SemanticAnalyzer\\": "SemanticAnalyzer/",
-            "Z99Interpreter\\": "Interpreter/"
+            "Z99Interpreter\\": "Interpreter/",
+            "Z99Parser\\": "Parser/",
+            "Z99Lexer\\": "Lexer/"
         }
     }
 }
