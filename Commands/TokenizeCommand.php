@@ -1,6 +1,6 @@
 <?php
 
-namespace Z99Compiler;
+namespace Commands;
 
 use InvalidArgumentException;
 use Symfony\Component\Console\Question\Question;

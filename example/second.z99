@@ -3,5 +3,5 @@ var i: int;
     sum: real;
 begin
     i = (100 - 50) / 2;
-    sumi = i + 10;
+    sum = i + 10;
 end.

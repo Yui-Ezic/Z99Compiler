@@ -29,7 +29,8 @@
             "SemanticAnalyzer\\": "SemanticAnalyzer/",
             "Z99Interpreter\\": "Interpreter/",
             "Z99Parser\\": "Parser/",
-            "Z99Lexer\\": "Lexer/"
+            "Z99Lexer\\": "Lexer/",
+            "Commands\\": "Commands/"
         }
     }
 }

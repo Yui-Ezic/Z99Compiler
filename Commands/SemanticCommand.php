@@ -1,19 +1,18 @@
 <?php
 
 
-namespace Z99Compiler;
+namespace Commands;
 
 use Z99Compiler\Entity\BinaryOperator;
 use Z99Compiler\Entity\Constant;
 use Z99Compiler\Entity\Identifier;
-use SemanticAnalyzer\SemanticAnalyzer;
-use Z99Compiler\Entity\Tree\TreeBuilder;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
+use Z99Compiler\Services\SemanticAnalyzer\DefaultSemanticAnalyzer;
 
 class SemanticCommand extends Command
 {
@@ -23,7 +22,7 @@ class SemanticCommand extends Command
             ->setDescription('Build RPN code, identifiers and constants table from parser tree.')
             ->addArgument('tree', InputArgument::REQUIRED, 'File path to parser tree.')
             ->addOption('output', 'o', InputOption::VALUE_OPTIONAL, 'Output file path.', 'semantic.json')
-        ->addOption('print', 'p', InputOption::VALUE_NONE, 'Print result to console.');
+            ->addOption('print', 'p', InputOption::VALUE_NONE, 'Print result to console.');
     }
 
     public function execute(InputInterface $input, OutputInterface $output): int
@@ -35,47 +34,39 @@ class SemanticCommand extends Command
             $treeFile = $this->getHelper('question')->ask($input, $output, $question);
         }
 
-        $parserTree = json_decode(file_get_contents($treeFile), true, 512, JSON_THROW_ON_ERROR);
-        $tree = TreeBuilder::fromJson($parserTree);
-
-        $semantic = new SemanticAnalyzer();
-
-        $semantic->process($tree);
-
-        $results['Identifiers'] = $semantic->getIdentifiers();
-        $results['Constants'] = $semantic->getConstants();
-        $results['RPNCode'] = $semantic->getRPNCode();
-
-        if ($input->getOption('print')) {
-            $this->printResults($semantic, $output);
-        }
+        $semantic = new DefaultSemanticAnalyzer();
+        $results = $semantic->processFile($treeFile);
 
         $file = fopen($input->getOption('output'), 'wb');
         fwrite($file, json_encode($results, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT));
 
-        $output->writeln('<info>Done!</info>');
+        if ($input->getOption('print')) {
+            $this->printResults($output, $results['Identifiers'], $results['Constants'], $results['RPNCode']);
+        } else {
+            $output->writeln('<info>Done!</info>');
+        }
 
         return 0;
     }
 
-    private function printResults(SemanticAnalyzer $semantic, OutputInterface $output): void
+    private function printResults(OutputInterface $output, $identifiers, $constants, $rpnCode): void
     {
         $output->writeln('<comment>Identifiers:</comment>');
         $output->writeln('Id   Name       Type       Value');
-        foreach ($semantic->getIdentifiers() as $identifier) {
+        foreach ($identifiers as $identifier) {
             $output->writeln($identifier);
         }
         $output->writeln('');
 
         $output->writeln('<comment>Constants:</comment>');
         echo 'Id   Value      Type' . PHP_EOL;
-        foreach ($semantic->getConstants() as $constant) {
+        foreach ($constants as $constant) {
             $output->writeln($constant);
         }
         $output->writeln('');
 
         $output->writeln('<comment>RPN:</comment>');
-        foreach ($semantic->getRPNCode() as $instruction) {
+        foreach ($rpnCode as $instruction) {
             foreach ($instruction as $item) {
                 if ($item instanceof Constant) {
                     $output->write('(' . $item->getType() . ' : ' . $item->getValue() . ') ');

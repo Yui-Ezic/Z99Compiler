@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Z99Compiler;
+namespace Commands;
 
 
 use Symfony\Component\Console\Command\Command;
