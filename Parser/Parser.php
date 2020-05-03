@@ -4,6 +4,7 @@
 namespace Z99Parser;
 
 
+use Z99Compiler\Entity\Tree\Node;
 use Z99Parser\Exceptions\ParserException;
 use Z99Parser\Streams\TokenStreamInterface;
 
@@ -19,34 +20,35 @@ class Parser
         $this->stream = $stream;
     }
 
-    public function program(): array
+    public function program(): Node
     {
-        $root = 'program';
-        $result[$root][] = $this->matchOrFail('Program');
-        $result[$root][] = $this->matchOrFail('Ident');
-        $result[$root][] = $this->matchOrFail('Var');
-        $result[$root][] = $this->declareList();
-        $result[$root][] = $this->matchOrFail('Semi');
-        $result[$root][] = $this->matchOrFail('Begin');
-        $result[$root][] = $this->statementList();
-        $result[$root][] = $this->matchOrFail('Semi');
-        $result[$root][] = $this->matchOrFail('End');
-        $result[$root][] = $this->matchOrFail('EOF');
+        $root = new Node('program');
+        $root->addChild($this->matchOrFail('Program'));
+        $root->addChild($this->matchOrFail('Ident'));
+        $root->addChild($this->matchOrFail('Var'));
+        $root->addChild($this->declareList());
+        $root->addChild($this->matchOrFail('Semi'));
+        $root->addChild($this->matchOrFail('Begin'));
+        $root->addChild($this->statementList());
+        $root->addChild($this->matchOrFail('Semi'));
+        $root->addChild($this->matchOrFail('End'));
+        $root->addChild($this->matchOrFail('EOF'));
 
-        return $result;
+        return $root;
     }
 
-    private function match($lexeme): ?array
+    private function match($lexeme): ?Node
     {
         if ($this->stream->lookAhead()->getType() === $lexeme) {
-            $array[$lexeme] = $this->stream->next()->getString();
-            return $array;
+            $root = new Node($lexeme);
+            $root->addChild(new Node($this->stream->next()->getString()));
+            return $root;
         }
 
         return null;
     }
 
-    private function matchOrFail($lexeme): array
+    private function matchOrFail($lexeme): Node
     {
         if ($result = $this->match($lexeme)) {
             return $result;
@@ -55,7 +57,7 @@ class Parser
         throw new ParserException("Expected $lexeme", $this->stream->lookAhead());
     }
 
-    private function matchOneOfLexeme(array $lexemes): array
+    private function matchOneOfLexeme(array $lexemes): Node
     {
         foreach ($lexemes as $lexeme) {
             if ($result = $this->match($lexeme)) {
@@ -66,7 +68,7 @@ class Parser
         throw new ParserException('Expected one of this lexemes ' . implode(', ', $lexemes), $this->stream->lookAhead());
     }
 
-    private function matchOneOfRules(array $rules): array
+    private function matchOneOfRules(array $rules): Node
     {
         foreach ($rules as $rule) {
             if ($result = $this->matchRule($rule)) {
@@ -77,7 +79,7 @@ class Parser
         throw new ParserException('Expected one of this rules ' . implode(', ', $rules), $this->stream->lookAhead());
     }
 
-    private function matchRule(string $rule): ?array
+    private function matchRule(string $rule): ?Node
     {
         $position = $this->stream->remember();
         try {
@@ -89,42 +91,42 @@ class Parser
         return null;
     }
 
-    public function declareList(): array
+    public function declareList(): Node
     {
-        $root = 'declareList';
-        $result[$root][] = $this->declaration();
+        $root = new Node('declareList');
+        $root->addChild($this->declaration());
 
-        $this->repeatedMatch(function () use (&$result, $root) {
+        $this->repeatedMatch(function () use ($root) {
             $tokens = [$this->matchOrFail('Semi'), $this->declaration()];
-            $result[$root][] = $tokens[0];
-            $result[$root][] = $tokens[1];
+            $root->addChild($tokens[0]);
+            $root->addChild($tokens[1]);
         });
 
-        return $result;
+        return $root;
     }
 
-    public function declaration(): array
+    public function declaration(): Node
     {
-        $root = 'declaration';
-        $result[$root][] = $this->identList();
-        $result[$root][] = $this->matchOrFail('Colon');
-        $result[$root][] = $this->matchOrFail('Type');
+        $root = new Node('declaration');
+        $root->addChild($this->identList());
+        $root->addChild($this->matchOrFail('Colon'));
+        $root->addChild($this->matchOrFail('Type'));
 
-        return $result;
+        return $root;
     }
 
-    public function identList(): array
+    public function identList(): Node
     {
-        $root = 'identList';
-        $result[$root][] = $this->matchOrFail('Ident');
+        $root = new Node('identList');
+        $root->addChild($this->matchOrFail('Ident'));
 
-        $this->repeatedMatch(function () use (&$result, $root) {
+        $this->repeatedMatch(function () use ($root) {
             $tokens = [$this->matchOrFail('Comma'), $this->matchOrFail('Ident')];
-            $result[$root][] = $tokens[0];
-            $result[$root][] = $tokens[1];
+            $root->addChild($tokens[0]);
+            $root->addChild($tokens[1]);
         });
 
-        return $result;
+        return $root;
     }
 
     private function repeatedMatch(callable $function): void
@@ -140,171 +142,173 @@ class Parser
         }
     }
 
-    public function statementList(): array
+    public function statementList(): Node
     {
-        $root = 'statementList';
-        $result[$root][] = $this->statement();
+        $root = new Node('statementList');
+        $root->addChild($this->statement());
 
-        $this->repeatedMatch(function () use (&$result, $root) {
+        $this->repeatedMatch(function () use ($root) {
             $tokens = [$this->matchOrFail('Semi'), $this->statement()];
-            $result[$root][] = $tokens[0];
-            $result[$root][] = $tokens[1];
+            $root->addChild($tokens[0]);
+            $root->addChild($tokens[1]);
         });
 
-        return $result;
+        return $root;
     }
 
-    public function statement(): array
+    public function statement(): Node
     {
-        // ['assign', 'input', 'output', 'branchStatement', 'repeatStatement']
-        $result['statement'] = $this->matchOneOfRules(['assign', 'input', 'output', 'branchStatement', 'repeatStatement']);
-        return $result;
+        $root = new Node('statement');
+        $root->addChild($this->matchOneOfRules(['assign', 'input', 'output', 'branchStatement', 'repeatStatement']));
+        return $root;
     }
 
-    public function input(): array
+    public function input(): Node
     {
-        $root = 'input';
-        $result[$root][] = $this->matchOrFail('Read');
-        $result[$root][] = $this->matchOrFail('LBracket');
-        $result[$root][] = $this->identList();
-        $result[$root][] = $this->matchOrFail('RBracket');
-        return $result;
+        $root = new Node('input');
+        $root->addChild($this->matchOrFail('Read'));
+        $root->addChild($this->matchOrFail('LBracket'));
+        $root->addChild($this->identList());
+        $root->addChild($this->matchOrFail('RBracket'));
+        return $root;
     }
 
-    public function output(): array
+    public function output(): Node
     {
-        $root = 'output';
-        $result[$root][] = $this->matchOrFail('Write');
-        $result[$root][] = $this->matchOrFail('LBracket');
-        $result[$root][] = $this->identList();
-        $result[$root][] = $this->matchOrFail('RBracket');
-        return $result;
+        $root = new Node('output');
+        $root->addChild($this->matchOrFail('Write'));
+        $root->addChild($this->matchOrFail('LBracket'));
+        $root->addChild($this->identList());
+        $root->addChild($this->matchOrFail('RBracket'));
+        return $root;
     }
 
-    public function branchStatement(): array
+    public function branchStatement(): Node
     {
-        $root = 'branchStatement';
-        $result[$root][] = $this->matchOrFail('If');
-        $result[$root][] = $this->expression();
-        $result[$root][] = $this->matchOrFail('Then');
-        $result[$root][] = $this->statementList();
-        $result[$root][] = $this->matchOrFail('Semi');
-        $result[$root][] = $this->matchOrFail('Fi');
-        return $result;
+        $root = new Node('branchStatement');
+        $root->addChild($this->matchOrFail('If'));
+        $root->addChild($this->expression());
+        $root->addChild($this->matchOrFail('Then'));
+        $root->addChild($this->statementList());
+        $root->addChild($this->matchOrFail('Semi'));
+        $root->addChild($this->matchOrFail('Fi'));
+        return $root;
     }
 
-    public function repeatStatement(): array
+    public function repeatStatement(): Node
     {
-        $root = 'repeatStatement';
-        $result[$root][] = $this->matchOrFail('Repeat');
-        $result[$root][] = $this->statementList();
-        $result[$root][] = $this->matchOrFail('Semi');
-        $result[$root][] = $this->matchOrFail('Until');
-        $result[$root][] = $this->boolExpr();
-        return $result;
+        $root = new Node('repeatStatement');
+        $root->addChild($this->matchOrFail('Repeat'));
+        $root->addChild($this->statementList());
+        $root->addChild($this->matchOrFail('Semi'));
+        $root->addChild($this->matchOrFail('Until'));
+        $root->addChild($this->boolExpr());
+        return $root;
     }
 
-    public function assign(): array
+    public function assign(): Node
     {
-        $root = 'assign';
-        $result[$root][] = $this->matchOrFail('Ident');
-        $result[$root][] = $this->matchOrFail('AssignOp');
-        $result[$root][] = $this->expression();
-        return $result;
+        $root = new Node('assign');
+        $root->addChild($this->matchOrFail('Ident'));
+        $root->addChild($this->matchOrFail('AssignOp'));
+        $root->addChild($this->expression());
+        return $root;
     }
 
-    public function expression(): array
+    public function expression(): Node
     {
-        $root = 'expression';
-        $result[$root][] = $this->matchOneOfRules(['arithmExpression', 'boolExpr']);
-        return $result;
+        $root = new Node('expression');
+        $root->addChild($this->matchOneOfRules(['arithmExpression', 'boolExpr']));
+        return $root;
     }
 
-    public function arithmExpression(): array
+    public function arithmExpression(): Node
     {
-        $root = 'arithmExpression';
+        $root = new Node('arithmExpression');
+        $children = [];
         $position = $this->stream->remember();
         try {
-            $result[$root][] = $this->term();
-            $result[$root][] = $this->addOp();
-            $result[$root][] = $this->arithmExpression();
+            $children[] = $this->term();
+            $children[] = $this->addOp();
+            $children[] = $this->arithmExpression();
         } catch (ParserException $e ) {
             $this->stream->goTo($position);
-            $result[$root] = null;
-            $result[$root][] = $this->term();
+            $children = [$this->term()];
         }
+        $root->addChildren($children);
 
-        return $result;
+        return $root;
     }
 
-    public function boolExpr(): array
+    public function boolExpr(): Node
     {
-        $root = 'boolExpr';
-        $result[$root][] = $this->arithmExpression();
-        $result[$root][] = $this->matchOrFail('RelOp');
-        $result[$root][] = $this->arithmExpression();
-        return $result;
+        $root = new Node('boolExpr');
+        $root->addChild($this->arithmExpression());
+        $root->addChild($this->matchOrFail('RelOp'));
+        $root->addChild($this->arithmExpression());
+        return $root;
     }
 
-    public function term(): array
+    public function term(): Node
     {
-        $root = 'term';
+        $root = new Node('term');
+        $children = [];
         $position = $this->stream->remember();
         try {
-            $result[$root][] = $this->factor();
-            $result[$root][] = $this->multOp();
-            $result[$root][] = $this->term();
+            $children[] = $this->factor();
+            $children[] = $this->multOp();
+            $children[] = $this->term();
         } catch (ParserException $e) {
             $this->stream->goTo($position);
-            $result[$root] = null;
-            $result[$root][] = $this->factor();
+            $children = [$this->factor()];
         }
+        $root->addChildren($children);
 
-        return $result;
+        return $root;
     }
 
-    public function factor(): array
+    public function factor(): Node
     {
-        $root = 'factor';
+        $root = new Node('factor');
         if ($match = $this->match('Ident')) {
-            $result[$root][] = $match;
-            return $result;
+            $root->addChild($match);
+            return $root;
         }
 
         if ($match = $this->matchRule('constant')) {
-            $result[$root][] = $match;
-            return $result;
+            $root->addChild($match);
+            return $root;
         }
 
         try {
-            $result[$root][] = $this->matchOrFail('LBracket');
-            $result[$root][] = $this->arithmExpression();
-            $result[$root][] = $this->matchOrFail('RBracket');
+            $root->addChild($this->matchOrFail('LBracket'));
+            $root->addChild($this->arithmExpression());
+            $root->addChild($this->matchOrFail('RBracket'));
         } catch (ParserException $e) {
             throw new ParserException('Expected Ident, constant or (arithmExpression)', $this->stream->lookAhead());
         }
 
-        return $result;
+        return $root;
     }
 
-    public function addOp(): array
+    public function addOp(): Node
     {
-        $root = 'addOp';
-        $result[$root][] = $this->matchOneOfLexeme(['Plus', 'Minus']);
-        return $result;
+        $root = new Node('addOp');
+        $root->addChild($this->matchOneOfLexeme(['Plus', 'Minus']));
+        return $root;
     }
 
-    public function multOp(): array
+    public function multOp(): Node
     {
-        $root = 'multOp';
-        $result[$root][] = $this->matchOneOfLexeme(['Star', 'Slash']);
-        return $result;
+        $root = new Node('multOp');
+        $root->addChild($this->matchOneOfLexeme(['Star', 'Slash']));
+        return $root;
     }
 
-    public function constant()
+    public function constant(): Node
     {
-        $root = 'constant';
-        $result[$root][] = $this->matchOneOfLexeme(['IntNum', 'RealNum', 'BoolConst']);
-        return $result;
+        $root = new Node('constant');
+        $root->addChild($this->matchOneOfLexeme(['IntNum', 'RealNum', 'BoolConst']));
+        return $root;
     }
 }

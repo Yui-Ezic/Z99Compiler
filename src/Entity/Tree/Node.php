@@ -4,7 +4,9 @@
 namespace Z99Compiler\Entity\Tree;
 
 
-class Node
+use JsonSerializable;
+
+class Node implements JsonSerializable
 {
     /**
      * @var string
@@ -39,10 +41,28 @@ class Node
     }
 
     /**
-     * @param Node $children
+     * @param Node $child
      */
-    public function addChild(Node $children): void
+    public function addChild(Node $child): void
     {
-        $this->children[] = $children;
+        $this->children[] = $child;
+    }
+
+    /**
+     * @param Node[] $children
+     */
+    public function addChildren(array $children): void
+    {
+        foreach ($children as $child) {
+            $this->addChild($child);
+        }
+    }
+
+    public function jsonSerialize()
+    {
+        return [
+            'name' => $this->getName(),
+            'children' => $this->getChildren()
+        ];
     }
 }

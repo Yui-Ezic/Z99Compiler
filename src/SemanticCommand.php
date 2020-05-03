@@ -36,7 +36,7 @@ class SemanticCommand extends Command
         }
 
         $parserTree = json_decode(file_get_contents($treeFile), true, 512, JSON_THROW_ON_ERROR);
-        $tree = TreeBuilder::fromJson($parserTree['program'], 'program');
+        $tree = TreeBuilder::fromJson($parserTree);
 
         $semantic = new SemanticAnalyzer();
 
