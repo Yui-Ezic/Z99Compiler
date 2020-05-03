@@ -41,7 +41,7 @@ class TokenizeCommand extends Command
         if ($lexer === 'default') {
             $grammar = require 'grammar.php';
             $lexer = new DefaultLexer($grammar);
-            fwrite($file, $lexer->tokenize($program));
+            fwrite($file, json_encode($lexer->tokenize($program), JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT));
         } elseif ($lexer === 'antlr4') {
             $lexer = new Antlr4Lexer();
             fwrite($file, $lexer->tokenize($program));

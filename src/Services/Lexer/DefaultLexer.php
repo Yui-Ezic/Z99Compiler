@@ -3,6 +3,7 @@
 
 namespace Z99Compiler\Services\Lexer;
 
+use Z99Compiler\Entity\Token;
 use Z99Lexer\Lexer;
 use Z99Lexer\FSM\FSM;
 use RuntimeException;
@@ -21,14 +22,18 @@ class DefaultLexer
         $this->grammar = $grammar;
     }
 
-    public function tokenize(string $fileName) : string
+    /**
+     * @param string $fileName
+     * @return Token[]
+     */
+    public function tokenize(string $fileName) : array
     {
         $stream = new FileStream($fileName);
         $lexer = new Lexer($stream, $this->grammar);
 
         try {
             $lexer->tokenize();
-            return json_encode($lexer->getTokens(), JSON_PRETTY_PRINT);
+            return $lexer->getTokens();
         } catch (LexerException $e) {
             $message = "Lexer failed with error '" . $e->getMessage() . "' in line " . $e->getErrorLine() . PHP_EOL;
             $message .= 'String: ' . $e->getString();
