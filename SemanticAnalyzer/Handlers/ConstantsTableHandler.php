@@ -90,6 +90,10 @@ class ConstantsTableHandler extends AbstractHandler
             return 'real';
         }
 
+        if ($type === 'BoolConst') {
+            return 'bool';
+        }
+
         throw new RuntimeException('Unknown constant type ' . $type);
     }
 }

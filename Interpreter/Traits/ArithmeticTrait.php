@@ -25,6 +25,16 @@ trait ArithmeticTrait
             throw new RuntimeException('Unable process undefined variable ' . $right->getName());
         }
 
+        $allowedTypes = ['int', 'real'];
+
+        if (!in_array($left->getType(), $allowedTypes, true)) {
+            throw new RuntimeException('Unsupported type ' . $left->getType() . ' in arithmetic operation');
+        }
+
+        if (!in_array($right->getType(), $allowedTypes, true)) {
+            throw new RuntimeException('Unsupported type ' . $right->getType() . ' in arithmetic operation');
+        }
+
         if ($operator->getType() === 'Plus') {
             return $this->plus($left, $right);
         }

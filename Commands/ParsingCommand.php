@@ -36,7 +36,7 @@ class ParsingCommand extends Command
         $file = fopen($outputFilePath, 'wb');
 
         $parser = new DefaultParser();
-        fwrite($file, $parser->parsing($tokens));
+        fwrite($file, json_encode($parser->parsingFile($tokens), JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT));
 
         $output->writeln('<info>Done!</info>');
 

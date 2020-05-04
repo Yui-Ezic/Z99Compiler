@@ -110,7 +110,7 @@ return (static function (){
     });
 
     $fsm->addFinalState(-17, static function (LexerWriterInterface $writer, string $string, int $line) {
-        $writer->addToken($line, $string, 'RelOp');
+        $writer->addToken($line, trim($string), 'RelOp');
     }, false);
 
     $fsm->addFinalState('error', static function (LexerWriterInterface $writer, string $string, int $line) {

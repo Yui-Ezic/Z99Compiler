@@ -218,7 +218,7 @@ class Parser
     public function expression(): Node
     {
         $root = new Node('expression');
-        $root->addChild($this->matchOneOfRules(['arithmExpression', 'boolExpr']));
+        $root->addChild($this->matchOneOfRules(['boolExpr', 'arithmExpression']));
         return $root;
     }
 

@@ -32,7 +32,7 @@ class DefaultParser
         } catch (ParserException $exception) {
             $message = "Parsing failed with error '" . $exception->getMessage() . "' in line " . $exception->getToken()->getLine() . PHP_EOL;
             $message .= 'Token: ' . $exception->getToken();
-            throw new RuntimeException($message);
+            throw new RuntimeException($message, 0, $exception);
         }
     }
 }

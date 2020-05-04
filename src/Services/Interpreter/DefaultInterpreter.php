@@ -12,7 +12,7 @@ use Z99Interpreter\Interpreter;
 
 class DefaultInterpreter
 {
-    public function processFile($fileName): void
+    public function processFile($fileName): array
     {
         $semanticResult = file_get_contents($fileName);
         $semanticResult = json_decode($semanticResult, true, 512, JSON_THROW_ON_ERROR);
@@ -25,7 +25,7 @@ class DefaultInterpreter
         $identifiers = $this->turnArrayItemsToObjects($semanticResult['Identifiers']);
         $constants = $this->turnArrayItemsToObjects($semanticResult['Constants']);
 
-        $this->process($RPNCode, $constants, $identifiers);
+        return $this->process($RPNCode, $constants, $identifiers);
     }
 
     /**
@@ -33,14 +33,15 @@ class DefaultInterpreter
      * @param $constants
      * @param $identifiers
      */
-    public function process($RPNCode, $constants, $identifiers): void
+    public function process($RPNCode, $constants, $identifiers): array
     {
         $interpreter = new Interpreter($RPNCode, $constants, $identifiers);
         $interpreter->process();
 
-        foreach ($interpreter->getConstants()->getConstants() as $constant) {
-            echo $constant . PHP_EOL;
-        }
+        return [
+            'Constants' => $interpreter->getConstants(),
+            'Identifiers' => $interpreter->getIdentifiers()
+        ];
     }
 
     private function itemToObject($item)

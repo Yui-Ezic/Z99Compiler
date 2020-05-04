@@ -12,10 +12,11 @@ use Z99Compiler\Entity\BinaryOperator;
 use Z99Compiler\Tables\ConstantsTable;
 use Z99Compiler\Tables\IdentifierTable;
 use Z99Interpreter\Traits\ArithmeticTrait;
+use Z99Interpreter\Traits\BoolExpressionTrait;
 
 class Interpreter
 {
-    use ArithmeticTrait;
+    use ArithmeticTrait, BoolExpressionTrait;
 
     /**
      * @var SplStack
@@ -56,16 +57,8 @@ class Interpreter
      */
     public function process(): void
     {
-        $step = 0;
         foreach ($this->RPNCode as $instruction) {
             $this->instruction($instruction);
-            echo "Step $step" . PHP_EOL;
-            echo 'Id   Name       Type       Value' . PHP_EOL;
-            foreach ($this->getIdentifiers()->getIdentifiers() as $identifier) {
-                echo $identifier . PHP_EOL;
-            }
-            echo PHP_EOL;
-            $step++;
         }
     }
 
@@ -93,6 +86,13 @@ class Interpreter
 
         if ($operator->isAddOp() || $operator->isMultOp()) {
             $result = $this->calculate($operator, $left, $right);
+            $constant = $this->constants->addConstant($result['value'], $result['type']);
+            $this->stack->push($constant);
+            return;
+        }
+
+        if ($operator->isRelOp()) {
+            $result = $this->calculateBool($operator, $left, $right);
             $constant = $this->constants->addConstant($result['value'], $result['type']);
             $this->stack->push($constant);
             return;

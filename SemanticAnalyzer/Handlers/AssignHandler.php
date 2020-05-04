@@ -71,7 +71,7 @@ class AssignHandler extends AbstractHandler
 
         $this->arithmExpression($children[2]);
         $this->arithmExpression($children[0]);
-        $this->result[] = $children[2]->getName();
+        $this->result[] = $this->relOp($children[1]);
     }
 
     public function arithmExpression(Node $node): void
@@ -136,6 +136,13 @@ class AssignHandler extends AbstractHandler
     }
 
     public function assignOp(Node $node): BinaryOperator
+    {
+        $type = $node->getName();
+        $operator = $node->getFirstChild()->getName();
+        return new BinaryOperator($operator, $type);
+    }
+
+    public function relOp(Node $node): BinaryOperator
     {
         $type = $node->getName();
         $operator = $node->getFirstChild()->getName();

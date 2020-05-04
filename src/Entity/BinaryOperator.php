@@ -63,4 +63,9 @@ class BinaryOperator implements JsonSerializable
     {
         return $this->getType() === 'AssignOp';
     }
+
+    public function isRelOp(): bool
+    {
+        return $this->getType() === 'RelOp';
+    }
 }
