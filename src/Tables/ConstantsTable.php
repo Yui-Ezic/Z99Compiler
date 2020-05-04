@@ -5,6 +5,7 @@ namespace Z99Compiler\Tables;
 
 
 use JsonSerializable;
+use RuntimeException;
 use Z99Compiler\Entity\Constant;
 
 class ConstantsTable implements JsonSerializable
@@ -77,5 +78,31 @@ class ConstantsTable implements JsonSerializable
     public function jsonSerialize()
     {
         return $this->constants;
+    }
+
+    /**
+     * @param Constant $constant
+     */
+    private function setConstant(Constant $constant)
+    {
+        $this->constants[$constant->getId()] = $constant;
+    }
+
+    /**
+     * @param array $array
+     * @return static
+     */
+    public static function fromArray(array $array): self
+    {
+        $constantTable = new static();
+        foreach ($array as $item) {
+            if ($item['object'] !== 'Constant') {
+                throw new RuntimeException('Unexpected object ' . $item['object'] . ' instead of constant');
+            }
+
+            $constantTable->setConstant(Constant::fromArray($item));
+        }
+
+        return $constantTable;
     }
 }

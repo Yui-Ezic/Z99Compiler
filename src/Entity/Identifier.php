@@ -99,4 +99,9 @@ class Identifier implements JsonSerializable
             'value' => $this->getValue()
         ];
     }
+
+    public static function fromArray($array): self
+    {
+        return new static($array['id'], $array['name'], $array['type'], $array['value']);
+    }
 }

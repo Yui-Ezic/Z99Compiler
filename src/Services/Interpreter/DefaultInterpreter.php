@@ -8,6 +8,8 @@ use RuntimeException;
 use Z99Compiler\Entity\BinaryOperator;
 use Z99Compiler\Entity\Constant;
 use Z99Compiler\Entity\Identifier;
+use Z99Compiler\Tables\ConstantsTable;
+use Z99Compiler\Tables\IdentifierTable;
 use Z99Interpreter\Interpreter;
 
 class DefaultInterpreter
@@ -22,8 +24,8 @@ class DefaultInterpreter
             $RPNCode[$key] = $this->turnArrayItemsToObjects($instruction);
         }
 
-        $identifiers = $this->turnArrayItemsToObjects($semanticResult['Identifiers']);
-        $constants = $this->turnArrayItemsToObjects($semanticResult['Constants']);
+        $identifiers = IdentifierTable::fromArray($semanticResult['Identifiers']);
+        $constants = ConstantsTable::fromArray($semanticResult['Constants']);
 
         return $this->process($RPNCode, $constants, $identifiers);
     }
@@ -32,6 +34,7 @@ class DefaultInterpreter
      * @param $RPNCode
      * @param $constants
      * @param $identifiers
+     * @return array
      */
     public function process($RPNCode, $constants, $identifiers): array
     {

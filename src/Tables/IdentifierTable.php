@@ -140,4 +140,30 @@ class IdentifierTable implements JsonSerializable
     {
         return $this->identifiers;
     }
+
+    /**
+     * @param Identifier $identifier
+     */
+    private function setIdentifier(Identifier $identifier)
+    {
+        $this->identifiers[$identifier->getId()] = $identifier;
+    }
+
+    /**
+     * @param array $array
+     * @return static
+     */
+    public static function fromArray(array $array): self
+    {
+        $identTable = new static();
+        foreach ($array as $item) {
+            if ($item['object'] !== 'Identifier') {
+                throw new RuntimeException('Unexpected object ' . $item['object'] . ' instead of identifier');
+            }
+
+            $identTable->setIdentifier(Identifier::fromArray($item));
+        }
+
+        return $identTable;
+    }
 }

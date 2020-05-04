@@ -75,4 +75,9 @@ class Constant implements JsonSerializable
             'type' => $this->getType()
         ];
     }
+
+    public static function fromArray(array $array): self
+    {
+        return new static($array['id'], $array['value'], $array['type']);
+    }
 }

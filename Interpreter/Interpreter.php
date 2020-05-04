@@ -100,7 +100,8 @@ class Interpreter
 
         if ($operator->isAssignOp()) {
             /** @var $left Identifier */
-            if ($left->getType() !== $right->getType()) {
+            $leftType = $left->getType();
+            if ($leftType !== 'real' && $leftType !== 'int' && ($leftType !== $right->getType())) {
                 throw new RuntimeException('Cannot set variable ' . $left->getName() . ' to ' . $right->getType());
             }
 
