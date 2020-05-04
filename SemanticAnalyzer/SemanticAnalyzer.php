@@ -8,8 +8,8 @@ use RuntimeException;
 use SemanticAnalyzer\Handlers\AssignHandler;
 use SemanticAnalyzer\Handlers\ConstantsTableHandler;
 use SemanticAnalyzer\Handlers\DeclareListHandler;
-use Z99Compiler\Entity\Constant;
 use Z99Compiler\Entity\Tree\Node;
+use Z99Compiler\Tables\ConstantsTable;
 use Z99Compiler\Tables\IdentifierTable;
 
 class SemanticAnalyzer
@@ -20,7 +20,7 @@ class SemanticAnalyzer
     private $RPNCode = [];
 
     /**
-     * @var Constant[]
+     * @var ConstantsTable
      */
     private $constants = [];
 
@@ -64,7 +64,7 @@ class SemanticAnalyzer
         return $this->declareListHandler->getIdentifiers();
     }
 
-    private function buildConstantsTable(Node $node): array
+    private function buildConstantsTable(Node $node): ConstantsTable
     {
         if (($node = $this->findFirst('statementList', $node)) === null) {
             throw new RuntimeException('Can not find statementList in program tree.');
@@ -111,9 +111,9 @@ class SemanticAnalyzer
     }
 
     /**
-     * @return Constant[]
+     * @return ConstantsTable
      */
-    public function getConstants(): array
+    public function getConstants(): ConstantsTable
     {
         return $this->constants;
     }

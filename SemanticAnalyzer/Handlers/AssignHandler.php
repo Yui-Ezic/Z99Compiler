@@ -9,6 +9,7 @@ use Z99Compiler\Entity\BinaryOperator;
 use Z99Compiler\Entity\Constant;
 use Z99Compiler\Entity\Identifier;
 use Z99Compiler\Entity\Tree\Node;
+use Z99Compiler\Tables\ConstantsTable;
 use Z99Compiler\Tables\IdentifierTable;
 
 class AssignHandler extends AbstractHandler
@@ -19,7 +20,7 @@ class AssignHandler extends AbstractHandler
     private $result = [];
 
     /**
-     * @var Constant[]
+     * @var ConstantsTable
      */
     private $constants;
 
@@ -28,7 +29,7 @@ class AssignHandler extends AbstractHandler
      */
     private $identifiers;
 
-    public function __construct(IdentifierTable $identifiers, array $constants)
+    public function __construct(IdentifierTable $identifiers, ConstantsTable $constants)
     {
         $this->identifiers = $identifiers;
         $this->constants = $constants;
@@ -148,10 +149,8 @@ class AssignHandler extends AbstractHandler
 
     private function findConstant($value) : Constant
     {
-        foreach ($this->constants as $constant) {
-            if ($constant->getValue() === $value) {
-                return $constant;
-            }
+        if (($constant = $this->constants->find($value)) !== null) {
+            return $constant;
         }
 
         throw new RuntimeException('Cannot find constant ' . $value , ' in constant table.');

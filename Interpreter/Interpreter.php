@@ -9,6 +9,7 @@ use RuntimeException;
 use Z99Compiler\Entity\Constant;
 use Z99Compiler\Entity\Identifier;
 use Z99Compiler\Entity\BinaryOperator;
+use Z99Compiler\Tables\ConstantsTable;
 use Z99Compiler\Tables\IdentifierTable;
 
 class Interpreter
@@ -36,10 +37,10 @@ class Interpreter
     /**
      * Interpreter constructor.
      * @param array $RPNCode
-     * @param Constant[] $constants
+     * @param ConstantsTable $constants
      * @param IdentifierTable $identifiers
      */
-    public function __construct(array $RPNCode, array $constants, IdentifierTable $identifiers)
+    public function __construct(array $RPNCode, ConstantsTable $constants, IdentifierTable $identifiers)
     {
         $this->RPNCode = $RPNCode;
         $this->constants = $constants;
@@ -125,7 +126,7 @@ class Interpreter
             throw new RuntimeException('Unknown arithmetic operator ' . $operator->getType());
         }
 
-        return new Constant(200, $value, $type);
+        return $this->constants->addConstant($value, $type);
 
     }
 
@@ -138,9 +139,9 @@ class Interpreter
     }
 
     /**
-     * @return Constant[]
+     * @return ConstantsTable
      */
-    public function getConstants(): array
+    public function getConstants(): ConstantsTable
     {
         return $this->constants;
     }

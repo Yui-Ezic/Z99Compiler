@@ -37,6 +37,10 @@ class DefaultInterpreter
     {
         $interpreter = new Interpreter($RPNCode, $constants, $identifiers);
         $interpreter->process();
+
+        foreach ($interpreter->getConstants()->getConstants() as $constant) {
+            echo $constant . PHP_EOL;
+        }
     }
 
     private function itemToObject($item)
