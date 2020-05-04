@@ -11,9 +11,12 @@ use Z99Compiler\Entity\Identifier;
 use Z99Compiler\Entity\BinaryOperator;
 use Z99Compiler\Tables\ConstantsTable;
 use Z99Compiler\Tables\IdentifierTable;
+use Z99Interpreter\Traits\ArithmeticTrait;
 
 class Interpreter
 {
+    use ArithmeticTrait;
+
     /**
      * @var SplStack
      */
@@ -48,6 +51,9 @@ class Interpreter
         $this->stack = new SplStack();
     }
 
+    /**
+     * Interpret program
+     */
     public function process(): void
     {
         $step = 0;
@@ -63,6 +69,9 @@ class Interpreter
         }
     }
 
+    /**
+     * @param array $instruction
+     */
     private function instruction(array $instruction): void
     {
         foreach ($instruction as $item) {
@@ -74,60 +83,32 @@ class Interpreter
         }
     }
 
+    /**
+     * @param BinaryOperator $operator
+     */
     private function binaryOperator(BinaryOperator $operator): void
     {
         $left = $this->stack->pop();
         $right = $this->stack->pop();
 
-        if ($this->isAddOp($operator) || $this->isMultOp($operator)) {
+        if ($operator->isAddOp() || $operator->isMultOp()) {
             $result = $this->calculate($operator, $left, $right);
-            $this->stack->push($result);
-        } elseif ($operator->getType() === 'AssignOp') {
+            $constant = $this->constants->addConstant($result['value'], $result['type']);
+            $this->stack->push($constant);
+            return;
+        }
+
+        if ($operator->isAssignOp()) {
             /** @var $left Identifier */
+            if ($left->getType() !== $right->getType()) {
+                throw new RuntimeException('Cannot set variable ' . $left->getName() . ' to ' . $right->getType());
+            }
+
             $this->identifiers->changeValue($left->getId(), $right->getValue());
-        } else {
-            throw new RuntimeException('Unknown binary operator ' . $operator->getType());
-        }
-    }
-
-    private function isAddOp(BinaryOperator $operator): bool
-    {
-        return $operator->getType() === 'Plus' || $operator->getType() === 'Minus';
-    }
-
-    private function isMultOp(BinaryOperator $operator): bool
-    {
-        return $operator->getType() === 'Star' || $operator->getType() === 'Slash';
-    }
-
-    private function calculate(BinaryOperator $operator, $left, $right): Constant
-    {
-        if ($operator->getType() === 'Plus') {
-            $value = $left->getValue() + $right->getValue();
-            if ($left->getType() === 'real' || $right->getType() === 'real') {
-                $type = 'real';
-            } else {
-                $type = 'int';
-            }
-        } elseif ($operator->getType() === 'Minus') {
-            $value = $left->getValue() - $right->getValue();
-            if ($left->getType() === 'real' || $right->getType() === 'real') {
-                $type = 'real';
-            } else {
-                $type = 'int';
-            }
-        } elseif ($operator->getType() === 'Star') {
-            $value = $left->getValue() * $right->getValue();
-            $type = 'real';
-        } elseif ($operator->getType() === 'Slash') {
-            $value = $left->getValue() / $right->getValue();
-            $type = 'real';
-        } else {
-            throw new RuntimeException('Unknown arithmetic operator ' . $operator->getType());
+            return;
         }
 
-        return $this->constants->addConstant($value, $type);
-
+        throw new RuntimeException('Unknown binary operator ' . $operator->getType());
     }
 
     /**

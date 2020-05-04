@@ -48,4 +48,19 @@ class BinaryOperator implements JsonSerializable
             'type' => $this->getType()
         ];
     }
+
+    public function isMultOp(): bool
+    {
+        return $this->getType() === 'Star' || $this->getType() === 'Slash';
+    }
+
+    public function isAddOp(): bool
+    {
+        return $this->getType() === 'Plus' || $this->getType() === 'Minus';
+    }
+
+    public function isAssignOp(): bool
+    {
+        return $this->getType() === 'AssignOp';
+    }
 }
