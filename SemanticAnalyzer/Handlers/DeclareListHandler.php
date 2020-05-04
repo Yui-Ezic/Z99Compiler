@@ -4,28 +4,26 @@
 namespace SemanticAnalyzer\Handlers;
 
 
-use RuntimeException;
-use Z99Compiler\Entity\Identifier;
 use Z99Compiler\Entity\Tree\Node;
+use Z99Compiler\Tables\IdentifierTable;
 
 class DeclareListHandler extends AbstractHandler
 {
     /**
-     * @var Identifier[]
+     * @var IdentifierTable
      */
-    private $identifiers = [];
+    private $identifiers;
 
-    /**
-     * @var int
-     */
-    private $identifierId = 0;
+    public function __construct()
+    {
+        $this->identifiers = new IdentifierTable();
+    }
 
     /**
      * @param Node $node
      */
     public function handle(Node $node): void
     {
-        $this->identifiers = [];
         $this->declareList($node);
     }
 
@@ -62,7 +60,8 @@ class DeclareListHandler extends AbstractHandler
         }
 
         foreach ($identifiers as $identifier) {
-            $this->addIdentifier($identifier, $type);
+            $this->identifiers->addIdentifier($identifier, $type);
+            //$this->addIdentifier($identifier, $type);
         }
     }
 
@@ -85,45 +84,9 @@ class DeclareListHandler extends AbstractHandler
     }
 
     /**
-     * @param $name
-     * @param $type
-     * @return int
+     * @return IdentifierTable
      */
-    private function addIdentifier($name, $type): int
-    {
-        if (($id = $this->findIdentifier($name)) !== null) {
-            throw new RuntimeException('Duplicate identifier ' . $name);
-        }
-
-        $id = $this->identifierId++;
-        $this->identifiers[$id] = new Identifier($id, $name, $type, null);
-
-        return $id;
-    }
-
-    /**
-     * Returns id of identifier if find else null
-     *
-     * @param $name
-     * @return int|null
-     */
-    private function findIdentifier($name): ?int
-    {
-        $array = array_map(static function (Identifier $identifier) {
-            return $identifier->getName();
-        }, $this->identifiers);
-
-        if (($id = array_search($name, $array, true)) !== false) {
-            return $id;
-        }
-
-        return null;
-    }
-
-    /**
-     * @return Identifier[]
-     */
-    public function getIdentifiers(): array
+    public function getIdentifiers(): IdentifierTable
     {
         return $this->identifiers;
     }

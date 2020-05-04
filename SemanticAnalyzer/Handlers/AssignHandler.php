@@ -9,6 +9,7 @@ use Z99Compiler\Entity\BinaryOperator;
 use Z99Compiler\Entity\Constant;
 use Z99Compiler\Entity\Identifier;
 use Z99Compiler\Entity\Tree\Node;
+use Z99Compiler\Tables\IdentifierTable;
 
 class AssignHandler extends AbstractHandler
 {
@@ -23,11 +24,11 @@ class AssignHandler extends AbstractHandler
     private $constants;
 
     /**
-     * @var Identifier[]
+     * @var IdentifierTable
      */
     private $identifiers;
 
-    public function __construct(array $identifiers, array $constants)
+    public function __construct(IdentifierTable $identifiers, array $constants)
     {
         $this->identifiers = $identifiers;
         $this->constants = $constants;
@@ -158,10 +159,8 @@ class AssignHandler extends AbstractHandler
 
     private function findIdentifier($name): Identifier
     {
-        foreach ($this->identifiers as $identifier) {
-            if ($identifier->getName() === $name) {
-                return $identifier;
-            }
+        if (($identifier = $this->identifiers->findByName($name)) !== null) {
+            return $identifier;
         }
 
         throw new RuntimeException('Cannot find variable ' . $name . ' in constant table.');

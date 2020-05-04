@@ -13,6 +13,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 use Z99Compiler\Services\SemanticAnalyzer\DefaultSemanticAnalyzer;
+use Z99Compiler\Tables\IdentifierTable;
 
 class SemanticCommand extends Command
 {
@@ -49,11 +50,11 @@ class SemanticCommand extends Command
         return 0;
     }
 
-    private function printResults(OutputInterface $output, $identifiers, $constants, $rpnCode): void
+    private function printResults(OutputInterface $output, IdentifierTable $identifiers, $constants, $rpnCode): void
     {
         $output->writeln('<comment>Identifiers:</comment>');
         $output->writeln('Id   Name       Type       Value');
-        foreach ($identifiers as $identifier) {
+        foreach ($identifiers->getIdentifiers() as $identifier) {
             $output->writeln($identifier);
         }
         $output->writeln('');

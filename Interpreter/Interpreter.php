@@ -9,6 +9,7 @@ use RuntimeException;
 use Z99Compiler\Entity\Constant;
 use Z99Compiler\Entity\Identifier;
 use Z99Compiler\Entity\BinaryOperator;
+use Z99Compiler\Tables\IdentifierTable;
 
 class Interpreter
 {
@@ -18,7 +19,7 @@ class Interpreter
     private $stack;
 
     /**
-     * @var Identifier[]
+     * @var IdentifierTable
      */
     private $identifiers;
 
@@ -36,9 +37,9 @@ class Interpreter
      * Interpreter constructor.
      * @param array $RPNCode
      * @param Constant[] $constants
-     * @param Identifier[] $identifiers
+     * @param IdentifierTable $identifiers
      */
-    public function __construct(array $RPNCode, array $constants, array $identifiers)
+    public function __construct(array $RPNCode, array $constants, IdentifierTable $identifiers)
     {
         $this->RPNCode = $RPNCode;
         $this->constants = $constants;
@@ -53,7 +54,7 @@ class Interpreter
             $this->instruction($instruction);
             echo "Step $step" . PHP_EOL;
             echo 'Id   Name       Type       Value' . PHP_EOL;
-            foreach ($this->getIdentifiers() as $identifier) {
+            foreach ($this->getIdentifiers()->getIdentifiers() as $identifier) {
                 echo $identifier . PHP_EOL;
             }
             echo PHP_EOL;
@@ -82,8 +83,7 @@ class Interpreter
             $this->stack->push($result);
         } elseif ($operator->getType() === 'AssignOp') {
             /** @var $left Identifier */
-            $left->setValue($right->getValue());
-            $this->identifiers[$left->getId()] = $left;
+            $this->identifiers->changeValue($left->getId(), $right->getValue());
         } else {
             throw new RuntimeException('Unknown binary operator ' . $operator->getType());
         }
@@ -130,9 +130,9 @@ class Interpreter
     }
 
     /**
-     * @return Identifier[]
+     * @return IdentifierTable
      */
-    public function getIdentifiers(): array
+    public function getIdentifiers(): IdentifierTable
     {
         return $this->identifiers;
     }

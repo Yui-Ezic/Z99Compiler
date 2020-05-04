@@ -9,8 +9,8 @@ use SemanticAnalyzer\Handlers\AssignHandler;
 use SemanticAnalyzer\Handlers\ConstantsTableHandler;
 use SemanticAnalyzer\Handlers\DeclareListHandler;
 use Z99Compiler\Entity\Constant;
-use Z99Compiler\Entity\Identifier;
 use Z99Compiler\Entity\Tree\Node;
+use Z99Compiler\Tables\IdentifierTable;
 
 class SemanticAnalyzer
 {
@@ -25,7 +25,7 @@ class SemanticAnalyzer
     private $constants = [];
 
     /**
-     * @var Identifier[]
+     * @var IdentifierTable
      */
     private $identifiers = [];
 
@@ -54,7 +54,7 @@ class SemanticAnalyzer
         $this->buildRPNCode($node);
     }
 
-    private function buildIdentifiersTable(Node $node): array
+    private function buildIdentifiersTable(Node $node): IdentifierTable
     {
         if (($node = $this->findFirst('declareList', $node)) === null) {
             throw new RuntimeException('Can not find declareList in program tree.');
@@ -103,9 +103,9 @@ class SemanticAnalyzer
     }
 
     /**
-     * @return Identifier[]
+     * @return IdentifierTable
      */
-    public function getIdentifiers(): array
+    public function getIdentifiers(): IdentifierTable
     {
         return $this->identifiers;
     }
