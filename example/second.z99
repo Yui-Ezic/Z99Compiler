@@ -2,6 +2,6 @@ program second
 var i: int;
     sum: real;
 begin
-    i = (100 - 50) / 2;
-    sum = i + 10;
+    i = 100 - 50;
+    sum = 10 + (i / 2);
 end.

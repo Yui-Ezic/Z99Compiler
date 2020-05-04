@@ -2,7 +2,6 @@ program first
 var i: int;
     sum, value, e : real;
 begin
-sum = sum + value;
     sum = 0.0;
     i = 1;
     repeat

@@ -40,6 +40,11 @@ class Node implements JsonSerializable
         return $this->children;
     }
 
+    public function getFirstChild(): Node
+    {
+        return $this->getChildren()[0];
+    }
+
     /**
      * @param Node $child
      */

@@ -77,9 +77,11 @@ class SemanticAnalyzer
 
     private function buildRPNCode(Node $node): void
     {
-        $nodes = Tree::findAll('assign', $node);
-        foreach ($nodes as $item) {
-            $this->RPNCode[] = $this->assignHandler->handle($item);
+        $statements = Tree::findAll('statement', $node);
+        foreach ($statements as $statement) {
+            if ($statement->getFirstChild()->getName() === 'assign') {
+                $this->RPNCode[] = $this->assignHandler->handle($statement->getFirstChild());
+            }
         }
     }
 

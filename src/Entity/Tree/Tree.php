@@ -81,7 +81,7 @@ class Tree
     /**
      * @param $name
      * @param Node $node
-     * @return array
+     * @return Node[]
      */
     public static function findAll($name, Node $node): array
     {

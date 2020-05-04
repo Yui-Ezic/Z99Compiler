@@ -117,34 +117,34 @@ class AssignHandler extends AbstractHandler
 
     public function constant(Node $node): Constant
     {
-        $value = $node->getChildren()[0]->getChildren()[0]->getName();
+        $value = $node->getFirstChild()->getFirstChild()->getName();
         return $this->findConstant($value);
     }
 
     public function multOp(Node $node): BinaryOperator
     {
-        $operator = $node->getChildren()[0]->getChildren()[0]->getName();
-        $type = $node->getChildren()[0]->getName();
+        $operator = $node->getFirstChild()->getFirstChild()->getName();
+        $type = $node->getFirstChild()->getName();
         return new BinaryOperator($operator, $type);
     }
 
     public function addOp(Node $node): BinaryOperator
     {
-        $operator = $node->getChildren()[0]->getChildren()[0]->getName();
-        $type = $node->getChildren()[0]->getName();
+        $operator = $node->getFirstChild()->getFirstChild()->getName();
+        $type = $node->getFirstChild()->getName();
         return new BinaryOperator($operator, $type);
     }
 
     public function assignOp(Node $node): BinaryOperator
     {
         $type = $node->getName();
-        $operator = $node->getChildren()[0]->getName();
+        $operator = $node->getFirstChild()->getName();
         return new BinaryOperator($operator, $type);
     }
 
     public function ident(Node $node): Identifier
     {
-        $name = $node->getChildren()[0]->getName();
+        $name = $node->getFirstChild()->getName();
         return $this->findIdentifier($name);
     }
 
