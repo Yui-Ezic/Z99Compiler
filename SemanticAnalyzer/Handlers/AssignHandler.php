@@ -9,6 +9,7 @@ use Z99Compiler\Entity\BinaryOperator;
 use Z99Compiler\Entity\Constant;
 use Z99Compiler\Entity\Identifier;
 use Z99Compiler\Entity\Tree\Node;
+use Z99Compiler\Entity\Tree\Tree;
 use Z99Compiler\Tables\ConstantsTable;
 use Z99Compiler\Tables\IdentifierTable;
 
@@ -44,7 +45,7 @@ class AssignHandler extends AbstractHandler
 
     public function assign(Node $node): void
     {
-        $children = $this->getChildrenOrFail($node);
+        $children = Tree::getChildrenOrFail($node);
 
         $this->expression($children[2]);
         $this->result[] = $this->ident($children[0]);
@@ -53,7 +54,7 @@ class AssignHandler extends AbstractHandler
 
     public function expression(Node $node): void
     {
-        $children = $this->getChildrenOrFail($node);
+        $children = Tree::getChildrenOrFail($node);
 
         if ($children[0]->getName() === 'boolExpr') {
             $this->boolExpr($children[0]);
@@ -66,7 +67,7 @@ class AssignHandler extends AbstractHandler
 
     public function boolExpr(Node $node): void
     {
-        $children = $this->getChildrenOrFail($node);
+        $children = Tree::getChildrenOrFail($node);
 
         $this->arithmExpression($children[2]);
         $this->arithmExpression($children[0]);
@@ -75,9 +76,9 @@ class AssignHandler extends AbstractHandler
 
     public function arithmExpression(Node $node): void
     {
-        $children = $this->getChildrenOrFail($node);
+        $children = Tree::getChildrenOrFail($node);
 
-        if ($this->has('addOp', $node)) {
+        if (Tree::hasChild('addOp', $node)) {
             $this->arithmExpression($children[2]);
             $this->term($children[0]);
             $this->result[] = $this->addOp($children[1]);
@@ -89,9 +90,9 @@ class AssignHandler extends AbstractHandler
 
     public function term(Node $node): void
     {
-        $children = $this->getChildrenOrFail($node);
+        $children = Tree::getChildrenOrFail($node);
 
-        if ($this->has('multOp', $node)) {
+        if (Tree::hasChild('multOp', $node)) {
             $this->term($children[2]);
             $this->factor($children[0]);
             $this->result[] = $this->multOp($children[1]);
@@ -103,11 +104,11 @@ class AssignHandler extends AbstractHandler
 
     public function factor(Node $node): void
     {
-        $children = $this->getChildrenOrFail($node);
+        $children = Tree::getChildrenOrFail($node);
 
-        if ($this->has('arithmExpression', $node)) {
+        if (Tree::hasChild('arithmExpression', $node)) {
             $this->arithmExpression($children[1]);
-        } elseif ($this->has('Ident', $node)) {
+        } elseif (Tree::hasChild('Ident', $node)) {
             $this->result[] = $this->ident($children[0]);
         } else {
             $this->result[] = $this->constant($children[0]);

@@ -5,6 +5,7 @@ namespace SemanticAnalyzer\Handlers;
 
 
 use Z99Compiler\Entity\Tree\Node;
+use Z99Compiler\Entity\Tree\Tree;
 use Z99Compiler\Tables\IdentifierTable;
 
 class DeclareListHandler extends AbstractHandler
@@ -32,7 +33,7 @@ class DeclareListHandler extends AbstractHandler
      */
     protected function declareList(Node $node): void
     {
-        $children = $this->getChildrenOrFail($node);
+        $children = Tree::getChildrenOrFail($node);
 
         foreach ($children as $child) {
             if ($child->getName() === 'declaration') {
@@ -46,7 +47,7 @@ class DeclareListHandler extends AbstractHandler
      */
     protected function declaration(Node $node): void
     {
-        $children = $this->getChildrenOrFail($node);
+        $children = Tree::getChildrenOrFail($node);
 
         $type = null;
         $identifiers = [];
@@ -71,7 +72,7 @@ class DeclareListHandler extends AbstractHandler
      */
     protected function identList(Node $node): array
     {
-        $children = $this->getChildrenOrFail($node);
+        $children = Tree::getChildrenOrFail($node);
         $identifiers = [];
 
         foreach ($children as $child) {

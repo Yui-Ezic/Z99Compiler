@@ -9,6 +9,7 @@ use SemanticAnalyzer\Handlers\AssignHandler;
 use SemanticAnalyzer\Handlers\ConstantsTableHandler;
 use SemanticAnalyzer\Handlers\DeclareListHandler;
 use Z99Compiler\Entity\Tree\Node;
+use Z99Compiler\Entity\Tree\Tree;
 use Z99Compiler\Tables\ConstantsTable;
 use Z99Compiler\Tables\IdentifierTable;
 
@@ -56,7 +57,7 @@ class SemanticAnalyzer
 
     private function buildIdentifiersTable(Node $node): IdentifierTable
     {
-        if (($node = $this->findFirst('declareList', $node)) === null) {
+        if (($node = Tree::findFirst('declareList', $node)) === null) {
             throw new RuntimeException('Can not find declareList in program tree.');
         }
 
@@ -66,7 +67,7 @@ class SemanticAnalyzer
 
     private function buildConstantsTable(Node $node): ConstantsTable
     {
-        if (($node = $this->findFirst('statementList', $node)) === null) {
+        if (($node = Tree::findFirst('statementList', $node)) === null) {
             throw new RuntimeException('Can not find statementList in program tree.');
         }
 
@@ -76,30 +77,10 @@ class SemanticAnalyzer
 
     private function buildRPNCode(Node $node): void
     {
-        if ($node->getName() === 'assign') {
-            $this->RPNCode[] = $this->assignHandler->handle($node);
-        } elseif ($children = $node->getChildren()) {
-            foreach ($children as $child) {
-                $this->buildRPNCode($child);
-            }
+        $nodes = Tree::findAll('assign', $node);
+        foreach ($nodes as $item) {
+            $this->RPNCode[] = $this->assignHandler->handle($item);
         }
-    }
-
-    private function findFirst($name, Node $node): ?Node
-    {
-        if ($node->getName() === $name) {
-            return $node;
-        }
-
-        if ($children = $node->getChildren()) {
-            foreach ($children as $child) {
-                if ($this->findFirst($name, $child)) {
-                    return $child;
-                }
-            }
-        }
-
-        return null;
     }
 
     /**

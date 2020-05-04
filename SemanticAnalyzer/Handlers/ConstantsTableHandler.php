@@ -5,8 +5,8 @@ namespace SemanticAnalyzer\Handlers;
 
 
 use RuntimeException;
-use Z99Compiler\Entity\Constant;
 use Z99Compiler\Entity\Tree\Node;
+use Z99Compiler\Entity\Tree\Tree;
 use Z99Compiler\Tables\ConstantsTable;
 
 class ConstantsTableHandler extends AbstractHandler
@@ -32,7 +32,7 @@ class ConstantsTableHandler extends AbstractHandler
 
     private function statementList(Node $node): void
     {
-        $children = $this->getChildrenOrFail($node);
+        $children = Tree::getChildrenOrFail($node);
 
         foreach ($children as $child) {
             if ($child->getName() === 'statement') {
