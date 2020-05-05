@@ -43,7 +43,7 @@ class ConstantsTable implements JsonSerializable
     public function find($value): ?Constant
     {
         foreach ($this->constants as $constant) {
-            if ($constant->getValue() === (string)$value) {
+            if ((string)$constant->getValue() === (string)$value) {
                 return $constant;
             }
         }
