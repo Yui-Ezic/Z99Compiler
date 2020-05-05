@@ -6,7 +6,7 @@ namespace Z99Compiler\Entity;
 
 use JsonSerializable;
 
-class BinaryOperator implements JsonSerializable
+class UnaryOperator implements JsonSerializable
 {
     /**
      * @var string
@@ -43,7 +43,7 @@ class BinaryOperator implements JsonSerializable
     public function jsonSerialize()
     {
         return [
-            'object' => 'BinaryOperator',
+            'object' => 'UnaryOperator',
             'operator' => $this->getOperator(),
             'type' => $this->getType()
         ];
@@ -54,23 +54,13 @@ class BinaryOperator implements JsonSerializable
         return new static($array['operator'], $array['type']);
     }
 
-    public function isMultOp(): bool
+    public function isPlus(): bool
     {
-        return $this->getType() === 'Star' || $this->getType() === 'Slash';
+        return $this->getType() === 'Plus';
     }
 
-    public function isAddOp(): bool
+    public function isMinus(): bool
     {
-        return $this->getType() === 'Plus' || $this->getType() === 'Minus';
-    }
-
-    public function isAssignOp(): bool
-    {
-        return $this->getType() === 'AssignOp';
-    }
-
-    public function isRelOp(): bool
-    {
-        return $this->getType() === 'RelOp';
+        return $this->getType() === 'Minus';
     }
 }

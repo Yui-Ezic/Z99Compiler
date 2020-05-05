@@ -12,6 +12,7 @@ use Symfony\Component\Console\Question\Question;
 use Z99Compiler\Entity\BinaryOperator;
 use Z99Compiler\Entity\Constant;
 use Z99Compiler\Entity\Identifier;
+use Z99Compiler\Entity\UnaryOperator;
 use Z99Compiler\Services\Interpreter\DefaultInterpreter;
 use Z99Compiler\Services\Lexer\DefaultLexer;
 use Z99Compiler\Services\Parser\DefaultParser;
@@ -87,6 +88,8 @@ class RunCommand extends Command
                     $output->write('(' . $item->getType() . ' : ' . $item->getName() . ') ');
                 } elseif ($item instanceof BinaryOperator) {
                     $output->write('(' . $item->getType() . ' : ' . $item->getOperator() . ') ');
+                } elseif ($item instanceof UnaryOperator) {
+                    $output->write('unary(' . $item->getType() . ' : ' . $item->getOperator() . ') ');
                 } else {
                     $output->write('<error>Undefined element</error> ');
                 }

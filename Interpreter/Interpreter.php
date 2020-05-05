@@ -9,6 +9,7 @@ use RuntimeException;
 use Z99Compiler\Entity\Constant;
 use Z99Compiler\Entity\Identifier;
 use Z99Compiler\Entity\BinaryOperator;
+use Z99Compiler\Entity\UnaryOperator;
 use Z99Compiler\Tables\ConstantsTable;
 use Z99Compiler\Tables\IdentifierTable;
 use Z99Interpreter\Traits\ArithmeticTrait;
@@ -72,6 +73,10 @@ class Interpreter
                 $this->stack->push($item);
             } elseif ($item instanceof BinaryOperator) {
                 $this->binaryOperator($item);
+            } elseif ($item instanceof UnaryOperator) {
+                $this->unaryOperator($item);
+            } else {
+                throw new RuntimeException('Unknown item ' . get_class($item));
             }
         }
     }
@@ -81,8 +86,8 @@ class Interpreter
      */
     private function binaryOperator(BinaryOperator $operator): void
     {
-        $left = $this->stack->pop();
-        $right = $this->stack->pop();
+        $left = $this->stakPop();
+        $right = $this->stakPop();
 
         if ($operator->isAddOp() || $operator->isMultOp()) {
             $result = $this->calculate($operator, $left, $right);
@@ -126,5 +131,33 @@ class Interpreter
     public function getConstants(): ConstantsTable
     {
         return $this->constants;
+    }
+
+    private function unaryOperator(UnaryOperator $operator): void
+    {
+        $operand = $this->stack->pop();
+
+        if ($operator->isPlus()) {
+            return;
+        }
+
+        if ($operator->isMinus()) {
+            $value =  - $operand->getValue();
+            $constant = $this->constants->addConstant($value, $operand->getType());
+            $this->stack->push($constant);
+            return;
+        }
+
+        throw new RuntimeException('Unknown unary operator ' . $operator->getType());
+    }
+
+    private function stakPop() {
+        $item = $this->stack->pop();
+
+        if ($item instanceof Identifier) {
+            return $this->identifiers->findByName($item->getName());
+        }
+
+        return $item;
     }
 }

@@ -12,6 +12,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
+use Z99Compiler\Entity\UnaryOperator;
 use Z99Compiler\Services\SemanticAnalyzer\DefaultSemanticAnalyzer;
 use Z99Compiler\Tables\ConstantsTable;
 use Z99Compiler\Tables\IdentifierTable;
@@ -76,6 +77,8 @@ class SemanticCommand extends Command
                     $output->write('(' . $item->getType() . ' : ' . $item->getName() . ') ');
                 } elseif ($item instanceof BinaryOperator) {
                     $output->write('(' . $item->getType() . ' : ' . $item->getOperator() . ') ');
+                } elseif ($item instanceof UnaryOperator) {
+                    $output->write('unary(' . $item->getType() . ' : ' . $item->getOperator() . ') ');
                 } else {
                     $output->write('<error>Undefined element</error> ');
                 }

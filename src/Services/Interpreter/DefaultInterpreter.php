@@ -8,6 +8,7 @@ use RuntimeException;
 use Z99Compiler\Entity\BinaryOperator;
 use Z99Compiler\Entity\Constant;
 use Z99Compiler\Entity\Identifier;
+use Z99Compiler\Entity\UnaryOperator;
 use Z99Compiler\Tables\ConstantsTable;
 use Z99Compiler\Tables\IdentifierTable;
 use Z99Interpreter\Interpreter;
@@ -49,16 +50,19 @@ class DefaultInterpreter
 
     private function itemToObject($item)
     {
-        if ($item['object'] === 'Identifier') {
-            return new Identifier($item['id'], $item['name'], $item['type'], $item['value']);
-        }
-
-        if ($item['object'] === 'Constant') {
-            return new Constant($item['id'], $item['value'], $item['type']);
-        }
-
-        if ($item['object'] === 'BinaryOperator') {
-            return new BinaryOperator($item['operator'], $item['type']);
+        switch ($item['object']) {
+            case 'Identifier':
+                return Identifier::fromArray($item);
+                break;
+            case 'Constant':
+                return Constant::fromArray($item);
+                break;
+            case 'BinaryOperator':
+                return BinaryOperator::fromArray($item);
+                break;
+            case 'UnaryOperator':
+                return UnaryOperator::fromArray($item);
+                break;
         }
 
         throw new RuntimeException('Unknown object type. ' . var_export($item, true));

@@ -72,25 +72,46 @@ class ConstantsTableHandler extends AbstractHandler
 
     public function constant(Node $node): void
     {
-        $type = $this->getTypeFromConstant($node);
-        $value = $node->getChildren()[0]->getChildren()[0]->getName();
+        $child = $node->getFirstChild();
+        $name = $child->getName();
+        if ($name === 'intNum' || $name === 'realNum') {
+            $this->intOrRealNum($child);
+            return;
+        }
+        $type = $this->nodeToType($child);
+        $value = $child->getFirstChild()->getName();
 
         $this->constants->addConstant($value, $type);
     }
 
-    public function getTypeFromConstant(Node $node): string
+    public function intOrRealNum(Node $node): void
     {
-        $type = $node->getChildren()[0]->getName();
+        $children = Tree::getChildrenOrFail($node);
+        if (count($children) === 2) {
+            $num = $children[1];
+        } else {
+            $num = $children[0];
+        }
 
-        if ($type === 'IntNum') {
+        $type = $this->nodeToType($num);
+        $value = $num->getFirstChild()->getName();
+
+        $this->constants->addConstant($value, $type);
+    }
+
+    public function nodeToType(Node $node): string
+    {
+        $type = $node->getName();
+
+        if ($type === 'UnsignedInt') {
             return 'int';
         }
 
-        if ($type === 'RealNum') {
+        if ($type === 'UnsignedReal') {
             return 'real';
         }
 
-        if ($type === 'BoolConst') {
+        if ($type === 'boolConst') {
             return 'bool';
         }
 

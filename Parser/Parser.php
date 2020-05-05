@@ -308,7 +308,38 @@ class Parser
     public function constant(): Node
     {
         $root = new Node('constant');
-        $root->addChild($this->matchOneOfLexeme(['IntNum', 'RealNum', 'BoolConst']));
+        try {
+            $root->addChild($this->matchOneOfRules(['intNum', 'RealNum']));
+        } catch (ParserException $exception) {
+            $root->addChild($this->matchOneOfLexeme(['BoolConst']));
+        }
+        return $root;
+    }
+
+    public function intNum(): Node
+    {
+        $root = new Node('intNum');
+        if (($sign = $this->matchRule('sign')) !== null) {
+            $root->addChild($sign);
+        }
+        $root->addChild($this->matchOrFail('UnsignedInt'));
+        return $root;
+    }
+
+    public function realNum(): Node
+    {
+        $root = new Node('realNum');
+        if (($sign = $this->matchRule('sign')) !== null) {
+            $root->addChild($sign);
+        }
+        $root->addChild($this->matchOrFail('UnsignedReal'));
+        return $root;
+    }
+
+    public function sign(): Node
+    {
+        $root = new Node('sign');
+        $root->addChild($this->matchOneOfLexeme(['Plus', 'Minus']));
         return $root;
     }
 }

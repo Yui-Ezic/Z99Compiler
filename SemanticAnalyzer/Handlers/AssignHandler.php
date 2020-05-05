@@ -10,6 +10,7 @@ use Z99Compiler\Entity\Constant;
 use Z99Compiler\Entity\Identifier;
 use Z99Compiler\Entity\Tree\Node;
 use Z99Compiler\Entity\Tree\Tree;
+use Z99Compiler\Entity\UnaryOperator;
 use Z99Compiler\Tables\ConstantsTable;
 use Z99Compiler\Tables\IdentifierTable;
 
@@ -111,14 +112,20 @@ class AssignHandler extends AbstractHandler
         } elseif (Tree::hasChild('Ident', $node)) {
             $this->result[] = $this->ident($children[0]);
         } else {
-            $this->result[] = $this->constant($children[0]);
+            $this->constant($children[0]);
         }
     }
 
-    public function constant(Node $node): Constant
+    public function constant(Node $node): void
     {
-        $value = $node->getFirstChild()->getFirstChild()->getName();
-        return $this->findConstant($value);
+        $child = $node->getFirstChild();
+        if ($child->getName() === 'BoolConst') {
+            $value = $child->getFirstChild()->getName();
+            $this->result[] = $this->findConstant($value);
+            return;
+        }
+
+        $this->intOrRealNum($child);
     }
 
     public function multOp(Node $node): BinaryOperator
@@ -171,5 +178,30 @@ class AssignHandler extends AbstractHandler
         }
 
         throw new RuntimeException('Cannot find variable ' . $name . ' in constant table.');
+    }
+
+    private function intOrRealNum(Node $node): void
+    {
+        $children = $node->getChildren();
+
+        if (count($children) === 2) {
+            $this->unsignedNum($children[1]);
+            $this->sign($children[0]);
+        } else {
+            $this->unsignedNum($children[0]);
+        }
+    }
+
+    private function unsignedNum(Node $node): void
+    {
+        $value = $node->getFirstChild()->getName();
+        $this->result[] = $this->findConstant($value);
+    }
+
+    private function sign(Node $node): void
+    {
+        $type = $node->getFirstChild()->getName();
+        $operator = $node->getFirstChild()->getFirstChild()->getName();
+        $this->result[] = new UnaryOperator($operator, $type);
     }
 }
