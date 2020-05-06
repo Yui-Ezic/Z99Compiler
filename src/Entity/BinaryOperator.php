@@ -56,7 +56,7 @@ class BinaryOperator implements JsonSerializable
 
     public function isMultOp(): bool
     {
-        return $this->getType() === 'Star' || $this->getType() === 'Slash';
+        return $this->getType() === 'Star' || $this->getType() === 'Slash' || $this->getType() === 'Caret';
     }
 
     public function isAddOp(): bool

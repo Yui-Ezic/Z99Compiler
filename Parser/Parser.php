@@ -301,7 +301,7 @@ class Parser
     public function multOp(): Node
     {
         $root = new Node('multOp');
-        $root->addChild($this->matchOneOfLexeme(['Star', 'Slash']));
+        $root->addChild($this->matchOneOfLexeme(['Star', 'Slash', 'Caret']));
         return $root;
     }
 

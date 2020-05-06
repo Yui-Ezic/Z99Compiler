@@ -113,6 +113,10 @@ return (static function (){
         $writer->addToken($line, trim($string), 'RelOp');
     }, false);
 
+    $fsm->addFinalState(-18, static function (LexerWriterInterface $writer, string $string, int $line) {
+        $writer->addToken($line, trim($string), 'Caret');
+    });
+
     $fsm->addFinalState('error', static function (LexerWriterInterface $writer, string $string, int $line) {
         throw new LexerException('Unknown char.', $string, $line);
     }, false);
@@ -136,6 +140,7 @@ return (static function (){
     $fsm->addTrigger(',', 0, -14);
     $fsm->addTrigger(':', 0, -15);
     $fsm->addTrigger(';', 0, -16);
+    $fsm->addTrigger('^', 0, -18);
     $fsm->addTrigger(FSM::DEFAULT_STATE, 0, 'error');
 
     $fsm->addTrigger(TriggerTypes::LETTER, 1, 1);

@@ -51,6 +51,10 @@ trait ArithmeticTrait
             return $this->slash($left, $right);
         }
 
+        if ($operator->getType() === 'Caret') {
+            return $this->caret($left, $right);
+        }
+
         throw new RuntimeException('Unknown arithmetic operator ' . $operator->getType());
     }
 
@@ -121,6 +125,22 @@ trait ArithmeticTrait
             throw new RuntimeException('Division by zero.');
         }
         $value = $left->getValue() / $right->getValue();
+        $type = 'real';
+
+        return [
+            'value' => $value,
+            'type' => $type
+        ];
+    }
+
+    /**
+     * @param $left
+     * @param $right
+     * @return array
+     */
+    private function caret($left, $right): array
+    {
+        $value = $left->getValue() ** $right->getValue();
         $type = 'real';
 
         return [
