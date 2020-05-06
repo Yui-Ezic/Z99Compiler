@@ -117,6 +117,9 @@ trait ArithmeticTrait
      */
     private function slash($left, $right): array
     {
+        if ($right->getValue() == 0) {
+            throw new RuntimeException('Division by zero.');
+        }
         $value = $left->getValue() / $right->getValue();
         $type = 'real';
 
