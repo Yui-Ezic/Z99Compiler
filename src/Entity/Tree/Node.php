@@ -18,6 +18,10 @@ class Node implements JsonSerializable
      */
     private $children;
 
+    /**
+     * Node constructor.
+     * @param string $name
+     */
     public function __construct(string $name)
     {
         $this->name = $name;
@@ -25,11 +29,11 @@ class Node implements JsonSerializable
     }
 
     /**
-     * @return string
+     * @return Node
      */
-    public function getName(): string
+    public function getFirstChild(): Node
     {
-        return $this->name;
+        return $this->getChildren()[0];
     }
 
     /**
@@ -38,19 +42,6 @@ class Node implements JsonSerializable
     public function getChildren(): ?array
     {
         return $this->children;
-    }
-
-    public function getFirstChild(): Node
-    {
-        return $this->getChildren()[0];
-    }
-
-    /**
-     * @param Node $child
-     */
-    public function addChild(Node $child): void
-    {
-        $this->children[] = $child;
     }
 
     /**
@@ -63,11 +54,30 @@ class Node implements JsonSerializable
         }
     }
 
+    /**
+     * @param Node $child
+     */
+    public function addChild(Node $child): void
+    {
+        $this->children[] = $child;
+    }
+
+    /**
+     * @return array
+     */
     public function jsonSerialize()
     {
         return [
             'name' => $this->getName(),
             'children' => $this->getChildren()
         ];
+    }
+
+    /**
+     * @return string
+     */
+    public function getName(): string
+    {
+        return $this->name;
     }
 }

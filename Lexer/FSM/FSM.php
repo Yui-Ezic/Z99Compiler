@@ -38,19 +38,25 @@ class FSM
         $this->graph = new Graph();
     }
 
-    public function visualize() : void
-    {
-        $graphviz = new GraphViz();
-        $graphviz->display($this->graph);
-    }
-
     public function addStart($id): State
     {
         $vertex = $this->createVertex($id);
         return $this->start_state = $this->addStateByVertex($id, $vertex);
     }
 
-    public function getStartState() : State
+    private function createVertex($id): Vertex
+    {
+        $vertex = $this->graph->createVertex($id);
+        $vertex->setAttribute('graphviz.label', $id);
+        return $vertex;
+    }
+
+    private function addStateByVertex($id, Vertex $vertex): State
+    {
+        return $this->states[$id] = new State($vertex);
+    }
+
+    public function getStartState(): State
     {
         if ($this->start_state === null) {
             throw new LogicException('Final state not set');
@@ -59,14 +65,14 @@ class FSM
         return $this->start_state;
     }
 
-    public function addState($id) : State
+    public function addState($id): State
     {
         $vertex = $this->createVertex($id);
         $vertex->setAttribute('graphviz.color', 'green');
         return $this->addStateByVertex($id, $vertex);
     }
 
-    public function addTrigger($trigger, $from, $to) : void
+    public function addTrigger($trigger, $from, $to): void
     {
         $from = $this->states[$from];
         $to = $this->states[$to];
@@ -100,7 +106,7 @@ class FSM
      * @param bool $needNext
      * @return State
      */
-    public function addFinalState($id, callable $callback, $needNext = true) : State
+    public function addFinalState($id, callable $callback, $needNext = true): State
     {
         $vertex = $this->createVertex($id);
         $vertex->setAttribute('graphviz.color', 'blue');
@@ -110,17 +116,9 @@ class FSM
         return $this->addStateByVertex($id, $vertex);
     }
 
-    private function createVertex($id): Vertex
+    public function visualize(): void
     {
-        $vertex = $this->graph->createVertex($id);
-        $vertex->setAttribute('graphviz.label', $id);
-        return $vertex;
+        $graphviz = new GraphViz();
+        $graphviz->display($this->graph);
     }
-
-    private function addStateByVertex($id, Vertex $vertex) : State
-    {
-        return $this->states[$id] = new State($vertex);
-    }
-
-
 }

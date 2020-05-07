@@ -106,7 +106,7 @@ class Interpreter
         if ($operator->isAssignOp()) {
             /** @var $left Identifier */
             $leftType = $left->getType();
-            if ($leftType !== 'real' && $leftType !== 'int' && ($leftType !== $right->getType())) {
+            if ($leftType !== 'real' && ($leftType !== $right->getType())) {
                 throw new RuntimeException('Cannot set variable ' . $left->getName() . ' to ' . $right->getType());
             }
 
@@ -135,9 +135,10 @@ class Interpreter
 
     private function unaryOperator(UnaryOperator $operator): void
     {
-        $operand = $this->stack->pop();
+        $operand = $this->stakPop();
 
         if ($operator->isPlus()) {
+            $this->stack->push($operand);
             return;
         }
 

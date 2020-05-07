@@ -177,7 +177,7 @@ class AssignHandler extends AbstractHandler
             return $identifier;
         }
 
-        throw new RuntimeException('Cannot find variable ' . $name . ' in constant table.');
+        throw new RuntimeException('Cannot find variable ' . $name . ' in identifiers table.');
     }
 
     private function intOrRealNum(Node $node): void
