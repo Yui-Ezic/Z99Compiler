@@ -15,7 +15,7 @@ use Symfony\Component\Console\Question\Question;
 use Z99Compiler\Entity\UnaryOperator;
 use Z99Compiler\Services\SemanticAnalyzer\DefaultSemanticAnalyzer;
 use Z99Compiler\Tables\ConstantsTable;
-use Z99Compiler\Tables\IdentifierTable;
+use Z99Compiler\Tables\IdentifiersTable;
 
 class SemanticCommand extends Command
 {
@@ -52,7 +52,7 @@ class SemanticCommand extends Command
         return 0;
     }
 
-    private function printResults(OutputInterface $output, IdentifierTable $identifiers, ConstantsTable $constants, $rpnCode): void
+    private function printResults(OutputInterface $output, IdentifiersTable $identifiers, ConstantsTable $constants, $rpnCode): void
     {
         $output->writeln('<comment>Identifiers:</comment>');
         $output->writeln('Id   Name       Type       Value');
@@ -70,20 +70,17 @@ class SemanticCommand extends Command
 
         $output->writeln('<comment>RPN:</comment>');
         foreach ($rpnCode as $instruction) {
-            foreach ($instruction as $item) {
-                if ($item instanceof Constant) {
-                    $output->write('(' . $item->getType() . ' : ' . $item->getValue() . ') ');
-                } elseif ($item instanceof Identifier) {
-                    $output->write('(' . $item->getType() . ' : ' . $item->getName() . ') ');
-                } elseif ($item instanceof BinaryOperator) {
-                    $output->write('(' . $item->getType() . ' : ' . $item->getOperator() . ') ');
-                } elseif ($item instanceof UnaryOperator) {
-                    $output->write('unary(' . $item->getType() . ' : ' . $item->getOperator() . ') ');
-                } else {
-                    $output->write('<error>Undefined element</error> ');
-                }
+            if ($instruction instanceof Constant) {
+                $output->write('(' . $instruction->getType() . ' : ' . $instruction->getValue() . ') ');
+            } elseif ($instruction instanceof Identifier) {
+                $output->write('(' . $instruction->getType() . ' : ' . $instruction->getName() . ') ');
+            } elseif ($instruction instanceof BinaryOperator) {
+                $output->write('(' . $instruction->getType() . ' : ' . $instruction->getOperator() . ') ');
+            } elseif ($instruction instanceof UnaryOperator) {
+                $output->write('unary(' . $instruction->getType() . ' : ' . $instruction->getOperator() . ') ');
+            } else {
+                $output->write('<error>Undefined element</error> ');
             }
-            $output->writeln('');
         }
     }
 }

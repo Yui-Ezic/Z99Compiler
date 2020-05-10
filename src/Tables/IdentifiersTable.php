@@ -8,7 +8,7 @@ use JsonSerializable;
 use RuntimeException;
 use Z99Compiler\Entity\Identifier;
 
-class IdentifierTable implements JsonSerializable
+class IdentifiersTable implements JsonSerializable
 {
     /**
      * @var Identifier[]

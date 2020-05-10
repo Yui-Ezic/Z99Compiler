@@ -6,18 +6,18 @@ namespace SemanticAnalyzer\Handlers;
 
 use Z99Compiler\Entity\Tree\Node;
 use Z99Compiler\Entity\Tree\Tree;
-use Z99Compiler\Tables\IdentifierTable;
+use Z99Compiler\Tables\IdentifiersTable;
 
 class DeclareListHandler extends AbstractHandler
 {
     /**
-     * @var IdentifierTable
+     * @var IdentifiersTable
      */
     private $identifiers;
 
     public function __construct()
     {
-        $this->identifiers = new IdentifierTable();
+        $this->identifiers = new IdentifiersTable();
     }
 
     /**
@@ -85,9 +85,9 @@ class DeclareListHandler extends AbstractHandler
     }
 
     /**
-     * @return IdentifierTable
+     * @return IdentifiersTable
      */
-    public function getIdentifiers(): IdentifierTable
+    public function getIdentifiers(): IdentifiersTable
     {
         return $this->identifiers;
     }

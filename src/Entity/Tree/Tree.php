@@ -46,6 +46,15 @@ class Tree
         return null;
     }
 
+    public static function findFirstOrFail($name, Node $node): Node
+    {
+        if (($result = static::findFirst($name, $node)) !== null) {
+            return $result;
+        }
+
+        throw new RuntimeException('Cannot find node with name ' . $name . ' in tree ' . $node->getName());
+    }
+
     /**
      * @param string $name
      * @param Node $node

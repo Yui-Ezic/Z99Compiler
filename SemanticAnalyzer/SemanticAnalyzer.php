@@ -5,13 +5,12 @@ namespace SemanticAnalyzer;
 
 
 use RuntimeException;
-use SemanticAnalyzer\Handlers\AssignHandler;
 use SemanticAnalyzer\Handlers\ConstantsTableHandler;
 use SemanticAnalyzer\Handlers\DeclareListHandler;
 use Z99Compiler\Entity\Tree\Node;
 use Z99Compiler\Entity\Tree\Tree;
 use Z99Compiler\Tables\ConstantsTable;
-use Z99Compiler\Tables\IdentifierTable;
+use Z99Compiler\Tables\IdentifiersTable;
 
 class SemanticAnalyzer
 {
@@ -26,14 +25,9 @@ class SemanticAnalyzer
     private $constants = [];
 
     /**
-     * @var IdentifierTable
+     * @var IdentifiersTable
      */
     private $identifiers = [];
-
-    /**
-     * @var AssignHandler
-     */
-    private $assignHandler;
 
     /**
      * @var DeclareListHandler
@@ -51,11 +45,10 @@ class SemanticAnalyzer
         $this->identifiers = $this->buildIdentifiersTable($node);
         $this->constantsTableHandler = new ConstantsTableHandler();
         $this->constants = $this->buildConstantsTable($node);
-        $this->assignHandler = new AssignHandler($this->identifiers, $this->constants);
         $this->buildRPNCode($node);
     }
 
-    private function buildIdentifiersTable(Node $node): IdentifierTable
+    private function buildIdentifiersTable(Node $node): IdentifiersTable
     {
         if (($node = Tree::findFirst('declareList', $node)) === null) {
             throw new RuntimeException('Can not find declareList in program tree.');
@@ -77,18 +70,20 @@ class SemanticAnalyzer
 
     private function buildRPNCode(Node $node): void
     {
-        $statements = Tree::findAll('statement', $node);
-        foreach ($statements as $statement) {
-            if ($statement->getFirstChild()->getName() === 'assign') {
-                $this->RPNCode[] = $this->assignHandler->handle($statement->getFirstChild());
-            }
-        }
+//        $statements = Tree::findAll('statement', $node);
+//        foreach ($statements as $statement) {
+//            if ($statement->getFirstChild()->getName() === 'assign') {
+//                $this->RPNCode[] = $this->assignHandler->handle($statement->getFirstChild());
+//            }
+//        }
+        $rpnBuilder = new RPNBuilder($this->identifiers, $this->constants);
+        $this->RPNCode = $rpnBuilder->buildRPN($node);
     }
 
     /**
-     * @return IdentifierTable
+     * @return IdentifiersTable
      */
-    public function getIdentifiers(): IdentifierTable
+    public function getIdentifiers(): IdentifiersTable
     {
         return $this->identifiers;
     }

@@ -10,7 +10,7 @@ use Z99Compiler\Entity\Constant;
 use Z99Compiler\Entity\Identifier;
 use Z99Compiler\Entity\UnaryOperator;
 use Z99Compiler\Tables\ConstantsTable;
-use Z99Compiler\Tables\IdentifierTable;
+use Z99Compiler\Tables\IdentifiersTable;
 use Z99Interpreter\Interpreter;
 
 class DefaultInterpreter
@@ -25,7 +25,7 @@ class DefaultInterpreter
             $RPNCode[$key] = $this->turnArrayItemsToObjects($instruction);
         }
 
-        $identifiers = IdentifierTable::fromArray($semanticResult['Identifiers']);
+        $identifiers = IdentifiersTable::fromArray($semanticResult['Identifiers']);
         $constants = ConstantsTable::fromArray($semanticResult['Constants']);
 
         return $this->process($RPNCode, $constants, $identifiers);

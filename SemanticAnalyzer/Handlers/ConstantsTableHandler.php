@@ -111,7 +111,7 @@ class ConstantsTableHandler extends AbstractHandler
             return 'real';
         }
 
-        if ($type === 'boolConst') {
+        if ($type === 'BoolConst') {
             return 'bool';
         }
 
