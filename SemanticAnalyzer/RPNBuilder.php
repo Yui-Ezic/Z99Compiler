@@ -74,9 +74,29 @@ class RPNBuilder
             $this->assign($child);
         } elseif ($child->getName() === 'branchStatement') {
             $this->branchStatement($child);
+        } elseif ($child->getName() === 'repeatStatement') {
+            $this->repeatStatement($child);
         } else {
             throw new RuntimeException('Unknown statement ' . $child->getName());
         }
+    }
+
+    /**
+     * Handle repeat Statement
+     * "Repeat statementList Semi Until boolExpr"
+     * @param Node $repeatStatement
+     */
+    public function repeatStatement(Node $repeatStatement): void
+    {
+        $children = Tree::getChildrenOrFail($repeatStatement);
+        $start = count($this->RPNCode);
+        $this->statementList($children[1]);
+        $this->boolExpr($children[4]);
+        $jf = $this->RPNCode[] = new JumpIf();
+        $this->RPNCode[] = $this->constants->addConstant('false', 'bool');
+        $this->RPNCode[] = new JumpIf($start);
+        $end = count($this->RPNCode);
+        $jf->setAddress($end);
     }
 
     /**

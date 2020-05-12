@@ -27,6 +27,12 @@ class ConstantsTable implements JsonSerializable
      */
     public function addConstant($value, $type): Constant
     {
+        if (is_int($value)) {
+            $type = 'int';
+        } elseif (is_float($value)) {
+            $type = 'real';
+        }
+
         if (($constant = $this->find($value)) !== null) {
             return $constant;
         }
