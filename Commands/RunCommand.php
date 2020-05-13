@@ -80,6 +80,7 @@ class RunCommand extends Command
 
     private function printResults(OutputInterface $output, IdentifiersTable $identifiers, ConstantsTable $constants, $rpnCode): void
     {
+        $output->writeln('');
         $output->writeln('<comment>RPN:</comment>');
         foreach ($rpnCode as $instruction) {
             if ($instruction instanceof Constant) {

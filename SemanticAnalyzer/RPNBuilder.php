@@ -76,8 +76,46 @@ class RPNBuilder
             $this->branchStatement($child);
         } elseif ($child->getName() === 'repeatStatement') {
             $this->repeatStatement($child);
+        } elseif ($child->getName() === 'output') {
+            $this->output($child);
+        } elseif ($child->getName() === 'input') {
+            $this->input($child);
         } else {
             throw new RuntimeException('Unknown statement ' . $child->getName());
+        }
+    }
+
+    /**
+     * Handle input statement
+     * "Input LBracket identList RBracket"
+     * @param Node $input
+     */
+    public function input(Node $input): void
+    {
+        $children = Tree::getChildrenOrFail($input);
+        $identList = $children[2];
+        foreach ($identList->getChildren() as $item) {
+            if ($item->getName() === 'Ident') {
+                $this->RPNCode[] = $this->ident($item);
+                $this->RPNCode[] = new UnaryOperator('read', 'Input');
+            }
+        }
+    }
+
+    /**
+     * Handle output statement
+     * "Write LBracket identList RBracket"
+     * @param Node $output
+     */
+    public function output(Node $output): void
+    {
+        $children = Tree::getChildrenOrFail($output);
+        $identList = $children[2];
+        foreach ($identList->getChildren() as $item) {
+            if ($item->getName() === 'Ident') {
+                $this->RPNCode[] = $this->ident($item);
+                $this->RPNCode[] = new UnaryOperator('write', 'Output');
+            }
         }
     }
 

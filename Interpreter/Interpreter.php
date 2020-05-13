@@ -172,6 +172,17 @@ class Interpreter
             return;
         }
 
+        if ($operator->isOutput()) {
+            echo $operand->getValue() . ' ';
+            return;
+        }
+
+        if ($operator->isInput()) {
+            $value = readline();
+            $operand->setValue($value);
+            return;
+        }
+
         throw new RuntimeException('Unknown unary operator ' . $operator->getType());
     }
 

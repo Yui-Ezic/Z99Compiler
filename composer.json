@@ -16,7 +16,8 @@
         "antlr/antlr4-php-runtime": "dev-master",
         "symfony/console": "^5.1@dev",
         "graphp/graphviz": "^0.2.2",
-        "ext-ctype": "*"
+        "ext-ctype": "*",
+        "ext-readline": "*"
     }
     ,
     "require-dev": {

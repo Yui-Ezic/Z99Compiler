@@ -63,4 +63,14 @@ class UnaryOperator implements JsonSerializable
     {
         return $this->getType() === 'Minus';
     }
+
+    public function isOutput(): bool
+    {
+        return $this->getType() === 'Output';
+    }
+
+    public function isInput(): bool
+    {
+        return $this->getType() === 'Input';
+    }
 }
