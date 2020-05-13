@@ -151,12 +151,17 @@ class RPNBuilder
         $jf->setAddress(count($this->RPNCode));
     }
 
+    /**
+     * Handle assign statement
+     * "Ident AssignOp expression"
+     * @param Node $node
+     */
     public function assign(Node $node): void
     {
         $children = Tree::getChildrenOrFail($node);
 
-        $this->expression($children[2]);
         $this->RPNCode[] = $this->ident($children[0]);
+        $this->expression($children[2]);
         $this->RPNCode[] = $this->assignOp($children[1]);
     }
 
@@ -177,8 +182,8 @@ class RPNBuilder
     {
         $children = Tree::getChildrenOrFail($node);
 
-        $this->arithmExpression($children[2]);
         $this->arithmExpression($children[0]);
+        $this->arithmExpression($children[2]);
         $this->RPNCode[] = $this->relOp($children[1]);
     }
 
@@ -187,8 +192,8 @@ class RPNBuilder
         $children = Tree::getChildrenOrFail($node);
 
         if (Tree::hasChild('addOp', $node)) {
-            $this->arithmExpression($children[2]);
             $this->term($children[0]);
+            $this->arithmExpression($children[2]);
             $this->RPNCode[] = $this->addOp($children[1]);
             return;
         }
@@ -201,8 +206,8 @@ class RPNBuilder
         $children = Tree::getChildrenOrFail($node);
 
         if (Tree::hasChild('multOp', $node)) {
-            $this->term($children[2]);
             $this->factor($children[0]);
+            $this->term($children[2]);
             $this->RPNCode[] = $this->multOp($children[1]);
             return;
         }

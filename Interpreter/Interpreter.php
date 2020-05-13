@@ -87,8 +87,8 @@ class Interpreter
      */
     private function binaryOperator(BinaryOperator $operator): void
     {
-        $left = $this->stakPop();
         $right = $this->stakPop();
+        $left = $this->stakPop();
 
         if ($operator->isAddOp() || $operator->isMultOp()) {
             $result = $this->calculate($operator, $left, $right);
