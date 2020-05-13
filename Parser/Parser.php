@@ -41,7 +41,8 @@ class Parser
     {
         if ($this->stream->lookAhead()->getType() === $lexeme) {
             $root = new Node($lexeme);
-            $root->addChild(new Node($this->stream->next()->getString()));
+            $token = $this->stream->next();
+            $root->addChild(new Node($token->getString(), $token->getLine()));
             return $root;
         }
 

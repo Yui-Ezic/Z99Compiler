@@ -230,24 +230,25 @@ class RPNBuilder
 
     public function ident(Node $node): Identifier
     {
-        $name = $node->getFirstChild()->getName();
-        return $this->findIdentifier($name);
+        $child = $node->getFirstChild();
+        return $this->findIdentifier($child);
     }
 
-    private function findIdentifier($name): Identifier
+    private function findIdentifier(Node $node): Identifier
     {
-        if (($identifier = $this->identifiers->findByName($name)) !== null) {
+        if (($identifier = $this->identifiers->findByName($node->getName())) !== null) {
             return $identifier;
         }
 
-        throw new RuntimeException('Cannot find variable ' . $name . ' in identifiers table.');
+        throw new RuntimeException('Cannot find variable ' . $node->getName() . ' in identifiers table.' . PHP_EOL .
+            'In line ' . $node->getLine());
     }
 
     public function constant(Node $node): void
     {
         $child = $node->getFirstChild();
         if ($child->getName() === 'BoolConst') {
-            $value = $child->getFirstChild()->getName();
+            $value = $child->getFirstChild();
             $this->RPNCode[] = $this->findConstant($value);
             return;
         }
@@ -255,13 +256,14 @@ class RPNBuilder
         $this->intOrRealNum($child);
     }
 
-    private function findConstant($value): Constant
+    private function findConstant(Node $node): Constant
     {
-        if (($constant = $this->constants->find($value)) !== null) {
+        if (($constant = $this->constants->find($node->getName())) !== null) {
             return $constant;
         }
 
-        throw new RuntimeException('Cannot find constant ' . $value, ' in constant table.');
+        throw new RuntimeException('Cannot find constant ' . $node->getName(), ' in constant table.' . PHP_EOL .
+            'In line ' . $node->getLine());
     }
 
     private function intOrRealNum(Node $node): void
@@ -278,7 +280,7 @@ class RPNBuilder
 
     private function unsignedNum(Node $node): void
     {
-        $value = $node->getFirstChild()->getName();
+        $value = $node->getFirstChild();
         $this->RPNCode[] = $this->findConstant($value);
     }
 

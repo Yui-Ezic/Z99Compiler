@@ -19,13 +19,20 @@ class Node implements JsonSerializable
     private $children;
 
     /**
+     * @var int|null
+     */
+    private $line;
+
+    /**
      * Node constructor.
      * @param string $name
+     * @param int|null $line
      */
-    public function __construct(string $name)
+    public function __construct(string $name, ?int $line = null)
     {
         $this->name = $name;
         $this->children = [];
+        $this->line = $line;
     }
 
     /**
@@ -69,6 +76,7 @@ class Node implements JsonSerializable
     {
         return [
             'name' => $this->getName(),
+            'line' => $this->getLine(),
             'children' => $this->getChildren()
         ];
     }
@@ -79,5 +87,13 @@ class Node implements JsonSerializable
     public function getName(): string
     {
         return $this->name;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getLine(): ?int
+    {
+        return $this->line;
     }
 }
