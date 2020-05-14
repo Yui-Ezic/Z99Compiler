@@ -104,7 +104,7 @@ assign
 
 // Expression
 expression
-    : arithmExpression | boolExpr
+    : boolExpr | arithmExpression
     ;
 
 boolExpr
@@ -112,14 +112,18 @@ boolExpr
     ;
 
 arithmExpression
-    : term
-    | term addOp arithmExpression
+    : term addOp arithmExpression
+    | term
     ;
 
 term
-    : factor
-    | factor multOp term
-    ; 
+    : signedFactor
+    | signedFactor multOp term
+    ;
+
+signedFactor
+    : addOp? factor
+    ;
 
 factor
     : Ident

@@ -256,15 +256,25 @@ class Parser
         $children = [];
         $position = $this->stream->remember();
         try {
-            $children[] = $this->factor();
+            $children[] = $this->signedFactor();
             $children[] = $this->multOp();
             $children[] = $this->term();
         } catch (ParserException $e) {
             $this->stream->goTo($position);
-            $children = [$this->factor()];
+            $children = [$this->signedFactor()];
         }
         $root->addChildren($children);
 
+        return $root;
+    }
+
+    public function signedFactor(): Node
+    {
+        $root = new Node('signedFactor');
+        if (($sign = $this->matchRule('addOp')) !== null) {
+            $root->addChild($sign);
+        }
+        $root->addChild($this->factor());
         return $root;
     }
 
@@ -309,38 +319,7 @@ class Parser
     public function constant(): Node
     {
         $root = new Node('constant');
-        try {
-            $root->addChild($this->matchOneOfRules(['intNum', 'RealNum']));
-        } catch (ParserException $exception) {
-            $root->addChild($this->matchOneOfLexeme(['BoolConst']));
-        }
-        return $root;
-    }
-
-    public function intNum(): Node
-    {
-        $root = new Node('intNum');
-        if (($sign = $this->matchRule('sign')) !== null) {
-            $root->addChild($sign);
-        }
-        $root->addChild($this->matchOrFail('UnsignedInt'));
-        return $root;
-    }
-
-    public function realNum(): Node
-    {
-        $root = new Node('realNum');
-        if (($sign = $this->matchRule('sign')) !== null) {
-            $root->addChild($sign);
-        }
-        $root->addChild($this->matchOrFail('UnsignedReal'));
-        return $root;
-    }
-
-    public function sign(): Node
-    {
-        $root = new Node('sign');
-        $root->addChild($this->matchOneOfLexeme(['Plus', 'Minus']));
+        $root->addChild($this->matchOneOfLexeme(['BoolConst', 'IntNum', 'RealNum']));
         return $root;
     }
 }

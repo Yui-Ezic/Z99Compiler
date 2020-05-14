@@ -206,13 +206,25 @@ class RPNBuilder
         $children = Tree::getChildrenOrFail($node);
 
         if (Tree::hasChild('multOp', $node)) {
-            $this->factor($children[0]);
+            $this->signedFactor($children[0]);
             $this->term($children[2]);
             $this->RPNCode[] = $this->multOp($children[1]);
             return;
         }
 
-        $this->factor($children[0]);
+        $this->signedFactor($children[0]);
+    }
+
+    public function signedFactor(Node $signedFactor): void
+    {
+        $children = $signedFactor->getChildren();
+
+        if (count($children) === 2) {
+            $this->factor($children[1]);
+            $this->unaryAddOp($children[0]);
+        } else {
+            $this->factor($children[0]);
+        }
     }
 
     public function factor(Node $node): void
@@ -247,13 +259,8 @@ class RPNBuilder
     public function constant(Node $node): void
     {
         $child = $node->getFirstChild();
-        if ($child->getName() === 'BoolConst') {
-            $value = $child->getFirstChild();
-            $this->RPNCode[] = $this->findConstant($value);
-            return;
-        }
-
-        $this->intOrRealNum($child);
+        $value = $child->getFirstChild();
+        $this->RPNCode[] = $this->findConstant($value);
     }
 
     private function findConstant(Node $node): Constant
@@ -262,32 +269,14 @@ class RPNBuilder
             return $constant;
         }
 
-        throw new RuntimeException('Cannot find constant ' . $node->getName(), ' in constant table.' . PHP_EOL .
-            'In line ' . $node->getLine());
+        throw new RuntimeException('Cannot find constant ' . $node->getName() . ' in constant table.' . PHP_EOL .
+            'In line ' . ($node->getLine() ?: ''));
     }
 
-    private function intOrRealNum(Node $node): void
+    private function unaryAddOp(Node $addOp): void
     {
-        $children = $node->getChildren();
-
-        if (count($children) === 2) {
-            $this->unsignedNum($children[1]);
-            $this->sign($children[0]);
-        } else {
-            $this->unsignedNum($children[0]);
-        }
-    }
-
-    private function unsignedNum(Node $node): void
-    {
-        $value = $node->getFirstChild();
-        $this->RPNCode[] = $this->findConstant($value);
-    }
-
-    private function sign(Node $node): void
-    {
-        $type = $node->getFirstChild()->getName();
-        $operator = $node->getFirstChild()->getFirstChild()->getName();
+        $type = $addOp->getFirstChild()->getName();
+        $operator = $addOp->getFirstChild()->getFirstChild()->getName();
         $this->RPNCode[] = new UnaryOperator($operator, $type);
     }
 
