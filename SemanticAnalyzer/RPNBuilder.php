@@ -8,12 +8,13 @@ use RuntimeException;
 use Z99Compiler\Entity\BinaryOperator;
 use Z99Compiler\Entity\Constant;
 use Z99Compiler\Entity\Identifier;
-use Z99Compiler\Entity\JumpIf;
+use Z99Compiler\Entity\Label;
 use Z99Compiler\Entity\Tree\Node;
 use Z99Compiler\Entity\Tree\Tree;
 use Z99Compiler\Entity\UnaryOperator;
 use Z99Compiler\Tables\ConstantsTable;
 use Z99Compiler\Tables\IdentifiersTable;
+use Z99Compiler\Tables\LabelsTable;
 
 class RPNBuilder
 {
@@ -33,14 +34,26 @@ class RPNBuilder
     private $RPNCode = [];
 
     /**
+     * @var LabelsTable
+     */
+    private $labelsTable;
+
+    /**
+     * @var int
+     */
+    private $labelNum = 0;
+
+    /**
      * RPNBuilder constructor.
      * @param IdentifiersTable $identifiers
      * @param ConstantsTable $constants
+     * @param LabelsTable $labelsTable
      */
-    public function __construct(IdentifiersTable $identifiers, ConstantsTable $constants)
+    public function __construct(IdentifiersTable $identifiers, ConstantsTable $constants, LabelsTable $labelsTable)
     {
         $this->identifiers = $identifiers;
         $this->constants = $constants;
+        $this->labelsTable = $labelsTable;
     }
 
     /**
@@ -126,15 +139,31 @@ class RPNBuilder
      */
     public function repeatStatement(Node $repeatStatement): void
     {
+        /**
+         * ~start~ statementList
+         * boolExpr startLabel JF
+         * endLabel Jump ~end~
+         */
         $children = Tree::getChildrenOrFail($repeatStatement);
         $start = count($this->RPNCode);
         $this->statementList($children[1]);
         $this->boolExpr($children[4]);
-        $jf = $this->RPNCode[] = new JumpIf();
-        $this->RPNCode[] = $this->constants->addConstant('false', 'bool');
-        $this->RPNCode[] = new JumpIf($start);
+        $endLabel = $this->RPNCode[] = new Label($this->generateLabelName());
+        $this->RPNCode[] = new BinaryOperator('jumpIf', 'JF');
+        $startLabel = $this->RPNCode[] = new Label($this->generateLabelName());
+        $this->RPNCode[] = new BinaryOperator('jump', 'Jump');
         $end = count($this->RPNCode);
-        $jf->setAddress($end);
+        $this->labelsTable->add($startLabel, $start);
+        $this->labelsTable->add($endLabel, $end);
+    }
+
+    /**
+     * Generate unique name for label
+     * @return string
+     */
+    private function generateLabelName(): string
+    {
+        return 'l' . $this->labelNum++;
     }
 
     /**
@@ -146,9 +175,11 @@ class RPNBuilder
     {
         $children = Tree::getChildrenOrFail($branchStatement);
         $this->expression($children[1]);
-        $jf = $this->RPNCode[] = new JumpIf();
+        $endLabel = $this->RPNCode[] = new Label($this->generateLabelName());
+        $this->RPNCode[] = new BinaryOperator('jumpIf', 'JF');
         $this->statementList($children[3]);
-        $jf->setAddress(count($this->RPNCode));
+        $end = count($this->RPNCode);
+        $this->labelsTable->add($endLabel, $end);
     }
 
     /**

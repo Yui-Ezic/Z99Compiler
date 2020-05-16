@@ -11,6 +11,7 @@ use Z99Compiler\Entity\Tree\Node;
 use Z99Compiler\Entity\Tree\Tree;
 use Z99Compiler\Tables\ConstantsTable;
 use Z99Compiler\Tables\IdentifiersTable;
+use Z99Compiler\Tables\LabelsTable;
 
 class SemanticAnalyzer
 {
@@ -22,12 +23,17 @@ class SemanticAnalyzer
     /**
      * @var ConstantsTable
      */
-    private $constants = [];
+    private $constants;
 
     /**
      * @var IdentifiersTable
      */
-    private $identifiers = [];
+    private $identifiers;
+
+    /**
+     * @var LabelsTable
+     */
+    private $labels;
 
     /**
      * @var DeclareListHandler
@@ -45,6 +51,7 @@ class SemanticAnalyzer
         $this->identifiers = $this->buildIdentifiersTable($node);
         $this->constantsTableHandler = new ConstantsTableHandler();
         $this->constants = $this->buildConstantsTable($node);
+        $this->labels = new LabelsTable();
         $this->buildRPNCode($node);
     }
 
@@ -68,15 +75,17 @@ class SemanticAnalyzer
         return $this->constantsTableHandler->getConstants();
     }
 
+    /**
+     * @return LabelsTable
+     */
+    public function getLabels(): LabelsTable
+    {
+        return $this->labels;
+    }
+
     private function buildRPNCode(Node $node): void
     {
-//        $statements = Tree::findAll('statement', $node);
-//        foreach ($statements as $statement) {
-//            if ($statement->getFirstChild()->getName() === 'assign') {
-//                $this->RPNCode[] = $this->assignHandler->handle($statement->getFirstChild());
-//            }
-//        }
-        $rpnBuilder = new RPNBuilder($this->identifiers, $this->constants);
+        $rpnBuilder = new RPNBuilder($this->identifiers, $this->constants, $this->labels);
         $this->RPNCode = $rpnBuilder->buildRPN($node);
     }
 

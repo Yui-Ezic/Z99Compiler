@@ -37,6 +37,7 @@ class DefaultSemanticAnalyzer
         $results['Identifiers'] = $semantic->getIdentifiers();
         $results['Constants'] = $semantic->getConstants();
         $results['RPNCode'] = $semantic->getRPNCode();
+        $results['Labels'] = $semantic->getLabels();
 
         return $results;
     }
