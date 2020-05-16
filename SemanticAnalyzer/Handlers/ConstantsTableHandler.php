@@ -4,7 +4,6 @@
 namespace SemanticAnalyzer\Handlers;
 
 
-use RuntimeException;
 use Z99Compiler\Entity\Tree\Node;
 use Z99Compiler\Entity\Tree\Tree;
 use Z99Compiler\Tables\ConstantsTable;
@@ -73,27 +72,7 @@ class ConstantsTableHandler extends AbstractHandler
     public function constant(Node $node): void
     {
         $child = $node->getFirstChild();
-        $type = $this->nodeToType($child);
         $value = $child->getFirstChild()->getName();
-        $this->constants->addConstant($value, $type);
-    }
-
-    public function nodeToType(Node $node): string
-    {
-        $type = $node->getName();
-
-        if ($type === 'IntNum') {
-            return 'int';
-        }
-
-        if ($type === 'RealNum') {
-            return 'real';
-        }
-
-        if ($type === 'BoolConst') {
-            return 'bool';
-        }
-
-        throw new RuntimeException('Unknown constant type ' . $type);
+        $this->constants->addConstant($value);
     }
 }

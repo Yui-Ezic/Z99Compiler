@@ -92,14 +92,14 @@ class Interpreter
 
         if ($operator->isAddOp() || $operator->isMultOp()) {
             $result = $this->calculate($operator, $left, $right);
-            $constant = $this->constants->addConstant($result['value'], $result['type']);
+            $constant = $this->constants->addConstant($result['value']);
             $this->stack->push($constant);
             return;
         }
 
         if ($operator->isRelOp()) {
             $result = $this->calculateBool($operator, $left, $right);
-            $constant = $this->constants->addConstant($result['value'], $result['type']);
+            $constant = $this->constants->addConstant($result['value']);
             $this->stack->push($constant);
             return;
         }
@@ -167,7 +167,7 @@ class Interpreter
 
         if ($operator->isMinus()) {
             $value =  - $operand->getValue();
-            $constant = $this->constants->addConstant($value, $operand->getType());
+            $constant = $this->constants->addConstant($value);
             $this->stack->push($constant);
             return;
         }
