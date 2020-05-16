@@ -151,7 +151,7 @@ class RPNBuilder
         $endLabel = $this->RPNCode[] = new Label($this->generateLabelName());
         $this->RPNCode[] = new BinaryOperator('jumpIf', 'JF');
         $startLabel = $this->RPNCode[] = new Label($this->generateLabelName());
-        $this->RPNCode[] = new BinaryOperator('jump', 'Jump');
+        $this->RPNCode[] = new UnaryOperator('jump', 'Jump');
         $end = count($this->RPNCode);
         $this->labelsTable->add($startLabel, $start);
         $this->labelsTable->add($endLabel, $end);
