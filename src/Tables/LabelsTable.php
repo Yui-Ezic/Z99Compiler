@@ -4,10 +4,11 @@
 namespace Z99Compiler\Tables;
 
 
+use JsonSerializable;
 use RuntimeException;
 use Z99Compiler\Entity\Label;
 
-class LabelsTable
+class LabelsTable implements JsonSerializable
 {
     /**
      * @var array
@@ -60,5 +61,21 @@ class LabelsTable
     public function getLabels(): array
     {
         return $this->labels;
+    }
+
+    public function jsonSerialize()
+    {
+        return $this->labels;
+    }
+
+    public static function fromArray(array $array): self
+    {
+        $labels = new static();
+        foreach ($array as $key => $item) {
+            $label = new Label($key);
+            $labels->add($label, $item);
+        }
+
+        return $labels;
     }
 }

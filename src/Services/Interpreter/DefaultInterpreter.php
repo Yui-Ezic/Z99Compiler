@@ -8,9 +8,11 @@ use RuntimeException;
 use Z99Compiler\Entity\BinaryOperator;
 use Z99Compiler\Entity\Constant;
 use Z99Compiler\Entity\Identifier;
+use Z99Compiler\Entity\Label;
 use Z99Compiler\Entity\UnaryOperator;
 use Z99Compiler\Tables\ConstantsTable;
 use Z99Compiler\Tables\IdentifiersTable;
+use Z99Compiler\Tables\LabelsTable;
 use Z99Interpreter\Interpreter;
 
 class DefaultInterpreter
@@ -27,24 +29,27 @@ class DefaultInterpreter
 
         $identifiers = IdentifiersTable::fromArray($semanticResult['Identifiers']);
         $constants = ConstantsTable::fromArray($semanticResult['Constants']);
+        $labels = LabelsTable::fromArray($semanticResult['Labels']);
 
-        return $this->process($RPNCode, $constants, $identifiers);
+        return $this->process($RPNCode, $constants, $labels, $identifiers);
     }
 
     /**
      * @param $RPNCode
      * @param $constants
+     * @param $labels
      * @param $identifiers
      * @return array
      */
-    public function process($RPNCode, $constants, $identifiers): array
+    public function process($RPNCode, $constants, $labels, $identifiers): array
     {
-        $interpreter = new Interpreter($RPNCode, $constants, $identifiers);
+        $interpreter = new Interpreter($RPNCode, $constants, $identifiers, $labels);
         $interpreter->process();
 
         return [
             'Constants' => $interpreter->getConstants(),
-            'Identifiers' => $interpreter->getIdentifiers()
+            'Identifiers' => $interpreter->getIdentifiers(),
+            'Labels' => $interpreter->getLabels()
         ];
     }
 
@@ -62,6 +67,9 @@ class DefaultInterpreter
                 break;
             case 'UnaryOperator':
                 return UnaryOperator::fromArray($item);
+                break;
+            case 'Label':
+                return Label::fromArray($item);
                 break;
         }
 

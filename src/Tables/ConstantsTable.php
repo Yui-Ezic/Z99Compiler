@@ -29,7 +29,7 @@ class ConstantsTable implements JsonSerializable
     {
         if (filter_var($value, FILTER_VALIDATE_INT) !== FALSE) {
             $type = 'int';
-        } elseif (filter_var($value, FILTER_VALIDATE_FLOAT)) {
+        } elseif (filter_var($value, FILTER_VALIDATE_FLOAT) !== FALSE) {
             $type = 'real';
         } elseif ($value === 'true' || $value === 'false') {
             $type = 'bool';

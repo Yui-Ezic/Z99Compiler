@@ -9,10 +9,11 @@ use RuntimeException;
 use Z99Compiler\Entity\Constant;
 use Z99Compiler\Entity\Identifier;
 use Z99Compiler\Entity\BinaryOperator;
-use Z99Compiler\Entity\JumpIf;
+use Z99Compiler\Entity\Label;
 use Z99Compiler\Entity\UnaryOperator;
 use Z99Compiler\Tables\ConstantsTable;
 use Z99Compiler\Tables\IdentifiersTable;
+use Z99Compiler\Tables\LabelsTable;
 use Z99Interpreter\Traits\ArithmeticTrait;
 use Z99Interpreter\Traits\BoolExpressionTrait;
 
@@ -36,6 +37,11 @@ class Interpreter
     private $constants;
 
     /**
+     * @var LabelsTable
+     */
+    private $labels;
+
+    /**
      * @var array
      */
     private $RPNCode;
@@ -50,13 +56,15 @@ class Interpreter
      * @param array $RPNCode
      * @param ConstantsTable $constants
      * @param IdentifiersTable $identifiers
+     * @param LabelsTable $labels
      */
-    public function __construct(array $RPNCode, ConstantsTable $constants, IdentifiersTable $identifiers)
+    public function __construct(array $RPNCode, ConstantsTable $constants, IdentifiersTable $identifiers, LabelsTable $labels)
     {
         $this->RPNCode = $RPNCode;
         $this->constants = $constants;
         $this->identifiers = $identifiers;
         $this->stack = new SplStack();
+        $this->labels = $labels;
     }
 
     /**
@@ -67,14 +75,12 @@ class Interpreter
         $size = count($this->RPNCode);
         while ($this->current < $size) {
             $item = $this->RPNCode[$this->current];
-            if ($item instanceof Constant || $item instanceof Identifier) {
+            if ($item instanceof Constant || $item instanceof Identifier || $item instanceof Label) {
                 $this->stack->push($item);
             } elseif ($item instanceof BinaryOperator) {
                 $this->binaryOperator($item);
             } elseif ($item instanceof UnaryOperator) {
                 $this->unaryOperator($item);
-            } elseif ($item instanceof JumpIf) {
-                $this->jumpIf($item);
             } else {
                 throw new RuntimeException('Unknown item ' . get_class($item));
             }
@@ -115,45 +121,44 @@ class Interpreter
             return;
         }
 
-        throw new RuntimeException('Unknown binary operator ' . $operator->getType());
-    }
-
-    private function jumpIf(JumpIf $jumpIf): void
-    {
-        $expression = $this->stakPop();
-        if ($expression instanceof Constant) {
-            $value = $expression->getValue();
-            if ($value === 'true') {
-                $value = true;
-            } elseif ($value === 'false') {
-                $value = false;
-            } else {
-                $value = (bool) $value;
-            }
-
-            if (!$value) {
-                $this->current = $jumpIf->getAddress() - 1;
-            }
+        if ($operator->isJF()) {
+            $this->jumpIf($left, $right);
             return;
         }
 
-        throw new RuntimeException('Expected constant instead of .' . get_class($expression));
+        throw new RuntimeException('Unknown binary operator ' . $operator->getType());
     }
 
-    /**
-     * @return IdentifiersTable
-     */
-    public function getIdentifiers(): IdentifiersTable
+    private function stakPop()
     {
-        return $this->identifiers;
+        $item = $this->stack->pop();
+
+        if ($item instanceof Identifier) {
+            return $this->identifiers->findByName($item->getName());
+        }
+
+        return $item;
     }
 
-    /**
-     * @return ConstantsTable
-     */
-    public function getConstants(): ConstantsTable
+    private function jumpIf(Constant $expression, Label $label): void
     {
-        return $this->constants;
+        $value = $expression->getValue();
+        if ($value === 'true') {
+            $value = true;
+        } elseif ($value === 'false') {
+            $value = false;
+        } else {
+            $value = (bool)$value;
+        }
+
+        if (!$value) {
+            $this->jumpTo($this->labels->getAddress($label));
+        }
+    }
+
+    private function jumpTo(int $address): void
+    {
+        $this->current = $address - 1;
     }
 
     private function unaryOperator(UnaryOperator $operator): void
@@ -166,7 +171,7 @@ class Interpreter
         }
 
         if ($operator->isMinus()) {
-            $value =  - $operand->getValue();
+            $value = -$operand->getValue();
             $constant = $this->constants->addConstant($value);
             $this->stack->push($constant);
             return;
@@ -183,16 +188,35 @@ class Interpreter
             return;
         }
 
+        if ($operator->isJump()) {
+            $this->jumpTo($this->labels->getAddress($operand));
+            return;
+        }
+
         throw new RuntimeException('Unknown unary operator ' . $operator->getType());
     }
 
-    private function stakPop() {
-        $item = $this->stack->pop();
+    /**
+     * @return LabelsTable
+     */
+    public function getLabels(): LabelsTable
+    {
+        return $this->labels;
+    }
 
-        if ($item instanceof Identifier) {
-            return $this->identifiers->findByName($item->getName());
-        }
+    /**
+     * @return IdentifiersTable
+     */
+    public function getIdentifiers(): IdentifiersTable
+    {
+        return $this->identifiers;
+    }
 
-        return $item;
+    /**
+     * @return ConstantsTable
+     */
+    public function getConstants(): ConstantsTable
+    {
+        return $this->constants;
     }
 }

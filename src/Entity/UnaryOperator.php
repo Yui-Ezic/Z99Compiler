@@ -73,4 +73,9 @@ class UnaryOperator implements JsonSerializable
     {
         return $this->getType() === 'Input';
     }
+
+    public function isJump(): bool
+    {
+        return $this->getType() === 'Jump';
+    }
 }

@@ -71,10 +71,10 @@ class RunCommand extends Command
 
         $tokens = $this->lexer->tokenize($file);
         $tree = $this->parser->parsingTokenArray($tokens);
-        $results =$semantic = $this->semanticAnalyzer->process($tree);
-        //$results = $this->interpreter->process($semantic['RPNCode'], $semantic['Constants'], $semantic['Identifiers']);
+        $semantic = $this->semanticAnalyzer->process($tree);
+        $results = $this->interpreter->process($semantic['RPNCode'], $semantic['Constants'], $semantic['Labels'], $semantic['Identifiers']);
 
-        $this->printResults($output, $results['Identifiers'], $results['Constants'], $semantic['Labels'], $semantic['RPNCode']);
+        $this->printResults($output, $results['Identifiers'], $results['Constants'], $results['Labels'], $semantic['RPNCode']);
 
         return 0;
     }

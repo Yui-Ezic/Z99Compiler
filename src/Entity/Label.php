@@ -40,4 +40,9 @@ class Label implements JsonSerializable
             'name' => $this->getName()
         ];
     }
+
+    public static function fromArray(array $array): self
+    {
+        return new static($array['name']);
+    }
 }
