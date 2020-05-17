@@ -67,6 +67,11 @@ class RPNBuilder
         return $this->RPNCode;
     }
 
+    /**
+     * Handle statementList rule
+     * "statement (Semi statement)*"
+     * @param Node $statementList
+     */
     private function statementList(Node $statementList): void
     {
         if ($statementList->getName() !== 'statementList') {
@@ -80,6 +85,15 @@ class RPNBuilder
         }
     }
 
+    /**
+     * Handle statement rule
+     * " assign
+     * | input
+     * | output
+     * | branchStatement
+     * | repeatStatement"
+     * @param Node $statement
+     */
     private function statement(Node $statement): void
     {
         $child = $statement->getFirstChild();
@@ -196,6 +210,11 @@ class RPNBuilder
         $this->RPNCode[] = $this->assignOp($children[1]);
     }
 
+    /**
+     * Handle expression rule
+     * "boolExpr | arithmExpression"
+     * @param Node $node
+     */
     public function expression(Node $node): void
     {
         $children = Tree::getChildrenOrFail($node);
@@ -209,6 +228,11 @@ class RPNBuilder
         }
     }
 
+    /**
+     * Handle boolExpr rule
+     * "arithmExpression RelOp arithmExpression"
+     * @param Node $node
+     */
     public function boolExpr(Node $node): void
     {
         $children = Tree::getChildrenOrFail($node);
@@ -218,6 +242,11 @@ class RPNBuilder
         $this->RPNCode[] = $this->relOp($children[1]);
     }
 
+    /**
+     * Handle arithmExpression rule
+     * "term addOp arithmExpression | term"
+     * @param Node $node
+     */
     public function arithmExpression(Node $node): void
     {
         $children = Tree::getChildrenOrFail($node);
@@ -232,6 +261,11 @@ class RPNBuilder
         $this->term($children[0]);
     }
 
+    /**
+     * Handle term rule
+     * "signedFactor multOp term | signedFactor"
+     * @param Node $node
+     */
     public function term(Node $node): void
     {
         $children = Tree::getChildrenOrFail($node);
@@ -246,6 +280,11 @@ class RPNBuilder
         $this->signedFactor($children[0]);
     }
 
+    /**
+     * Handle signedFactor rule
+     * "addOp? factor"
+     * @param Node $signedFactor
+     */
     public function signedFactor(Node $signedFactor): void
     {
         $children = $signedFactor->getChildren();
@@ -258,6 +297,13 @@ class RPNBuilder
         }
     }
 
+    /**
+     * Handle factor rule
+     * " Ident
+     * | constant
+     * | LBracket arithmExpression RBracket"
+     * @param Node $node
+     */
     public function factor(Node $node): void
     {
         $children = Tree::getChildrenOrFail($node);
@@ -271,12 +317,22 @@ class RPNBuilder
         }
     }
 
+    /**
+     * Handle ident
+     * @param Node $node
+     * @return Identifier
+     */
     public function ident(Node $node): Identifier
     {
         $child = $node->getFirstChild();
         return $this->findIdentifier($child);
     }
 
+    /**
+     * Find identifier in table or fail
+     * @param Node $node
+     * @return Identifier
+     */
     private function findIdentifier(Node $node): Identifier
     {
         if (($identifier = $this->identifiers->findByName($node->getName())) !== null) {
@@ -287,6 +343,13 @@ class RPNBuilder
             'In line ' . $node->getLine());
     }
 
+    /**
+     * Handle constant rule
+     * " IntNum
+     * | RealNum
+     * | BoolConst"
+     * @param Node $node
+     */
     public function constant(Node $node): void
     {
         $child = $node->getFirstChild();
@@ -294,6 +357,11 @@ class RPNBuilder
         $this->RPNCode[] = $this->findConstant($value);
     }
 
+    /**
+     * Find constant in table or fail
+     * @param Node $node
+     * @return Constant
+     */
     private function findConstant(Node $node): Constant
     {
         if (($constant = $this->constants->find($node->getName())) !== null) {
@@ -304,6 +372,10 @@ class RPNBuilder
             'In line ' . ($node->getLine() ?: ''));
     }
 
+    /**
+     * Handle unary Plus and Minus
+     * @param Node $addOp
+     */
     private function unaryAddOp(Node $addOp): void
     {
         $type = $addOp->getFirstChild()->getName();
@@ -311,6 +383,11 @@ class RPNBuilder
         $this->RPNCode[] = new UnaryOperator($operator, $type);
     }
 
+    /**
+     * Handle binary Star and Slash operations
+     * @param Node $node
+     * @return BinaryOperator
+     */
     public function multOp(Node $node): BinaryOperator
     {
         $operator = $node->getFirstChild()->getFirstChild()->getName();
@@ -318,6 +395,11 @@ class RPNBuilder
         return new BinaryOperator($operator, $type);
     }
 
+    /**
+     * Handle binary Plus and Minus
+     * @param Node $node
+     * @return BinaryOperator
+     */
     public function addOp(Node $node): BinaryOperator
     {
         $operator = $node->getFirstChild()->getFirstChild()->getName();
@@ -325,6 +407,11 @@ class RPNBuilder
         return new BinaryOperator($operator, $type);
     }
 
+    /**
+     * Handle binary relations operation
+     * @param Node $node
+     * @return BinaryOperator
+     */
     public function relOp(Node $node): BinaryOperator
     {
         $type = $node->getName();
@@ -332,6 +419,11 @@ class RPNBuilder
         return new BinaryOperator($operator, $type);
     }
 
+    /**
+     * Handle binary assign operation
+     * @param Node $node
+     * @return BinaryOperator
+     */
     public function assignOp(Node $node): BinaryOperator
     {
         $type = $node->getName();

@@ -112,12 +112,7 @@ class Interpreter
 
         if ($operator->isAssignOp()) {
             /** @var $left Identifier */
-            $leftType = $left->getType();
-            if ($leftType !== 'real' && ($leftType !== $right->getType())) {
-                throw new RuntimeException('Cannot set variable ' . $left->getName() . ' to ' . $right->getType());
-            }
-
-            $this->identifiers->changeValue($left->getId(), $right->getValue());
+            $this->identifiers->changeValue($left->getId(), $right);
             return;
         }
 
@@ -184,7 +179,8 @@ class Interpreter
 
         if ($operator->isInput()) {
             $value = readline();
-            $operand->setValue($value);
+            $constant = $this->constants->addConstant($value);
+            $this->identifiers->changeValue($operand->getId(), $constant);
             return;
         }
 

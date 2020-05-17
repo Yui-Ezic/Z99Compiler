@@ -6,6 +6,7 @@ namespace Z99Compiler\Tables;
 
 use JsonSerializable;
 use RuntimeException;
+use Z99Compiler\Entity\Constant;
 use Z99Compiler\Entity\Identifier;
 
 class IdentifiersTable implements JsonSerializable
@@ -114,26 +115,30 @@ class IdentifiersTable implements JsonSerializable
     }
 
     /**
+     * Change value of identifier by his id
      * @param $id
-     * @param $value
+     * @param Constant|Identifier $value
      */
     public function changeValue($id, $value): void
     {
         $identifier = $this->identifiers[$id];
-        $identifier->setValue($value);
-    }
 
-    /**
-     * @param $name
-     * @param $value
-     */
-    public function changeValueByName($name, $value): void
-    {
-        if(($identifier = $this->findByName($name)) === null) {
-            throw new RuntimeException("Cannot find $name identifier.");
+        // type assignment rules
+        $typesMap = [
+            'int' => ['int'],
+            'real' => ['int', 'real'],
+            'bool' => ['bool']
+        ];
+
+        if (!array_key_exists($identifier->getType(), $typesMap)) {
+            throw new RuntimeException('Invalid identifier type ' . $identifier->getType());
         }
 
-        $identifier->setValue($value);
+        if (!in_array($value->getType(), $typesMap[$identifier->getType()], true)) {
+            throw new RuntimeException('Cannot set variable (' . $identifier->getName() . ' : ' . $identifier->getType() . ') to ' . $value->getType());
+        }
+
+        $identifier->setValue($value->getValue());
     }
 
     public function jsonSerialize()
@@ -144,7 +149,7 @@ class IdentifiersTable implements JsonSerializable
     /**
      * @param Identifier $identifier
      */
-    private function setIdentifier(Identifier $identifier)
+    private function setIdentifier(Identifier $identifier): void
     {
         $this->identifiers[$identifier->getId()] = $identifier;
     }

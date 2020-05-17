@@ -117,8 +117,8 @@ arithmExpression
     ;
 
 term
-    : signedFactor
-    | signedFactor multOp term
+    : signedFactor multOp term
+    | signedFactor
     ;
 
 signedFactor

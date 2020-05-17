@@ -22,7 +22,6 @@ class ConstantsTable implements JsonSerializable
 
     /**
      * @param $value
-     * @param $type
      * @return Constant
      */
     public function addConstant($value): Constant
