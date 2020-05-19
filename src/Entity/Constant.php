@@ -5,6 +5,7 @@ namespace Z99Compiler\Entity;
 
 
 use JsonSerializable;
+use RuntimeException;
 
 class Constant implements JsonSerializable
 {
@@ -39,11 +40,28 @@ class Constant implements JsonSerializable
     }
 
     /**
-     * @return number
+     * @return string
      */
     public function getValue()
     {
         return $this->value;
+    }
+
+    /**
+     * @return bool|float|int
+     */
+    public function getTypedValue()
+    {
+        switch ($this->type) {
+            case 'real':
+                return (float)$this->value;
+            case 'int':
+                return (int)$this->value;
+            case 'bool':
+                return $this->value === 'true' ? true : false;
+            default:
+                throw new RuntimeException('Unknown constant type ' . $this->type);
+        }
     }
 
     /**

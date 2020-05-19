@@ -137,14 +137,7 @@ class Interpreter
 
     private function jumpIf(Constant $expression, Label $label): void
     {
-        $value = $expression->getValue();
-        if ($value === 'true') {
-            $value = true;
-        } elseif ($value === 'false') {
-            $value = false;
-        } else {
-            $value = (bool)$value;
-        }
+        $value = (bool)$expression->getTypedValue();
 
         if (!$value) {
             $this->jumpTo($this->labels->getAddress($label));
