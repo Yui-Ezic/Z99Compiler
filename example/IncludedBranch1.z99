@@ -1,0 +1,11 @@
+program IncludedBranch1
+var a, b: int;
+begin
+    a = 4;
+    b = 5;
+    if true then
+        if a < b then
+            write(b);
+        fi;
+    fi;
+end.

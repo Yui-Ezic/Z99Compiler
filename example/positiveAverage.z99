@@ -1,0 +1,17 @@
+program positiveAverage
+var i: int;
+    sum, value: real;
+begin
+    sum = 0.0;
+    i = 1;
+    repeat
+        read (value);
+        if value < 0 then
+            value = -value;
+        fi;
+        sum = sum + value;
+        i = i + 1;
+    until i <= 3;
+    sum = sum / 3;
+    write(sum);
+end.

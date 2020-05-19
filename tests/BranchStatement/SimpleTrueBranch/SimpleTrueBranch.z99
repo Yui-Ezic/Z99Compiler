@@ -1,0 +1,7 @@
+program SimpleTrueBranch
+var a: int;
+begin
+    if true then
+        a = 5;
+    fi;
+end.

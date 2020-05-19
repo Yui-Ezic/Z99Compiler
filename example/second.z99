@@ -2,6 +2,7 @@ program second
 var i: int;
     sum: real;
 begin
-    i = 100 - 50;
-    sum = 10 + (i / 2);
+    if 2 < 3 then
+        i = 5;
+    fi;
 end.
