@@ -1,0 +1,6 @@
+program ReadBool
+var flag: bool;
+begin
+    read(flag);
+    write(flag);
+end.

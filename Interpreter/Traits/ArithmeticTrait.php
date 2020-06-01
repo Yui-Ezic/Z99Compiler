@@ -66,15 +66,9 @@ trait ArithmeticTrait
     private function plus($left, $right): array
     {
         $value = $left->getValue() + $right->getValue();
-        if ($left->getType() === 'real' || $right->getType() === 'real') {
-            $type = 'real';
-        } else {
-            $type = 'int';
-        }
 
         return [
-            'value' => $value,
-            'type' => $type
+            'value' => $value
         ];
     }
 
@@ -86,11 +80,6 @@ trait ArithmeticTrait
     private function minus($left, $right): array
     {
         $value = $left->getValue() - $right->getValue();
-        if ($left->getType() === 'real' || $right->getType() === 'real') {
-            $type = 'real';
-        } else {
-            $type = 'int';
-        }
 
         return [
             'value' => $value,
@@ -106,11 +95,9 @@ trait ArithmeticTrait
     private function star($left, $right): array
     {
         $value = $left->getValue() * $right->getValue();
-        $type = 'real';
 
         return [
             'value' => $value,
-            'type' => $type
         ];
     }
 
@@ -125,11 +112,9 @@ trait ArithmeticTrait
             throw new RuntimeException('Division by zero.');
         }
         $value = $left->getValue() / $right->getValue();
-        $type = 'real';
 
         return [
             'value' => $value,
-            'type' => $type
         ];
     }
 
@@ -141,11 +126,9 @@ trait ArithmeticTrait
     private function caret($left, $right): array
     {
         $value = $left->getValue() ** $right->getValue();
-        $type = 'real';
 
         return [
             'value' => $value,
-            'type' => $type
         ];
     }
 }

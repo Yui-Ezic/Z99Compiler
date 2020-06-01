@@ -1,7 +1,7 @@
-program second
+program unaryMinusBeforeIdent
 var i: int;
     sum: real;
 begin
     i = 10;
-    sum = -(i / 2);
+    sum = -i;
 end.

@@ -20,6 +20,12 @@ class Parser
         $this->stream = $stream;
     }
 
+    /**
+     * program
+     *     : Program Ident Var declareList Semi Begin statementList Semi End EOF
+     *     ;
+     * @return Node
+     */
     public function program(): Node
     {
         $root = new Node('program');
@@ -143,6 +149,12 @@ class Parser
         }
     }
 
+    /**
+     * statementList
+     *     : statement (Semi statement)*
+     *     ;
+     * @return Node
+     */
     public function statementList(): Node
     {
         $root = new Node('statementList');
@@ -157,6 +169,16 @@ class Parser
         return $root;
     }
 
+    /**
+     * statement
+     *     : assign
+     *     | input
+     *     | output
+     *     | branchStatement
+     *     | repeatStatement
+     *     ;
+     * @return Node
+     */
     public function statement(): Node
     {
         $root = new Node('statement');

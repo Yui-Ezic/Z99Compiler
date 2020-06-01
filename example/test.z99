@@ -1,0 +1,5 @@
+program test
+var a: int;
+begin
+    a = 5
+end.

@@ -89,7 +89,7 @@ class Token implements JsonSerializable
                 'line' => $this->getLine(),
                 'type' => $this->getType(),
                 'string' => $this->getString(),
-                'index' => $this->getIndex()
+                //'index' => $this->getIndex()
             ];
     }
 }

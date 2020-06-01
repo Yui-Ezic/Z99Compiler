@@ -1,0 +1,6 @@
+program ReadReal
+var ident: real;
+begin
+    read(ident);
+    write(ident);
+end.

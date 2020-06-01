@@ -83,8 +83,18 @@ class RunCommand extends Command
     {
         $output->writeln('');
         $output->writeln('<comment>RPN:</comment>');
-        foreach ($rpnCode as $key => $instruction) {
-            $output->writeln($key . ' -> ' . $this->instructionToString($instruction, $labels));
+        for($i = 0, $len = count($rpnCode); $i < $len; $i += 5) {
+            $output->writeln('--------------------------------------------------------------------------------------------------------------');
+            for ($j = 0; $j < 5 ; $j++) {
+                $output->write(sprintf(' %-19s |', $i + $j));
+            }
+            $output->writeln('');
+            $output->writeln('--------------------------------------------------------------------------------------------------------------');
+            for ($j = 0; $j < 5 && ($i + $j) < $len; $j++) {
+                $output->write(sprintf(' %-19s |', $this->instructionToString($rpnCode[$i + $j], $labels)));
+            }
+            $output->writeln('');
+            $output->writeln('--------------------------------------------------------------------------------------------------------------');
         }
         $output->writeln('');
 
@@ -127,7 +137,7 @@ class RunCommand extends Command
         }
 
         if ($instruction instanceof UnaryOperator) {
-            return 'unary(' . $instruction->getType() . ' : ' . $instruction->getOperator() . ') ';
+            return 'u(' . $instruction->getType() . ' : ' . $instruction->getOperator() . ') ';
         }
 
         if ($instruction instanceof Label) {

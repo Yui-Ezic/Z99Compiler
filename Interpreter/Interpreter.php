@@ -75,7 +75,9 @@ class Interpreter
         $size = count($this->RPNCode);
         while ($this->current < $size) {
             $item = $this->RPNCode[$this->current];
-            if ($item instanceof Constant || $item instanceof Identifier || $item instanceof Label) {
+            if ($item instanceof Constant
+                || $item instanceof Identifier
+                || $item instanceof Label) {
                 $this->stack->push($item);
             } elseif ($item instanceof BinaryOperator) {
                 $this->binaryOperator($item);

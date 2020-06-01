@@ -101,7 +101,7 @@ class FSM
      *     }
      *
      *     $writer->addToken($line, $string, 'Keyword');
-     * })
+     * }
      *
      * @param bool $needNext
      * @return State
